@@ -10,3 +10,12 @@ export interface Product {
 export interface CartItem extends Product {
   quantity: number;
 }
+
+export interface WishlistItem {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  category: string;
+  description?: string;
+}
