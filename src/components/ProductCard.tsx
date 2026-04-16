@@ -7,13 +7,17 @@ import { useWishlistStore } from '@/store/wishlist';
 import { useToastStore } from '@/store/toast';
 import ProductQuickView from './ProductQuickView';
 
+interface ProductImage {
+  url: string;
+}
+
 interface Product {
   id: string;
   title: string;
   description: string;
   price: number | null;
   currency: string;
-  images: any[];
+  images: ProductImage[];
   category?: string;
   subcategory?: string;
   quantity: number;

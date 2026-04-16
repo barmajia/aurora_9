@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/store/auth';
-import { Store, Shield, TrendingUp } from 'lucide-react';
+import { Store, Shield } from 'lucide-react';
 
 export default function SellerLoginPage() {
   const [email, setEmail] = useState('');
@@ -47,8 +47,8 @@ export default function SellerLoginPage() {
       });
 
       router.push('/seller/dashboard');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
       setLoading(false);
     }

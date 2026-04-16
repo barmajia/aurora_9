@@ -6,13 +6,17 @@ import { useCartStore } from '@/store/cart';
 import { useWishlistStore } from '@/store/wishlist';
 import { useToastStore } from '@/store/toast';
 
+interface ProductImage {
+  url: string;
+}
+
 interface ProductQuickViewType {
   id: string;
   title: string;
   description: string;
   price: number | null;
   currency: string;
-  images: any[];
+  images: ProductImage[];
   category?: string;
   subcategory?: string;
   quantity: number;

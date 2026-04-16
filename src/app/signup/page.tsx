@@ -57,8 +57,8 @@ export default function SignupPage() {
       });
 
       router.push('/profile');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Signup failed');
     } finally {
       setLoading(false);
     }

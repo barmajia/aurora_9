@@ -1,41 +1,54 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/store/auth';
-import { User, Mail, Phone, Calendar, ShoppingBag, DollarSign } from 'lucide-react';
+import { ShoppingBag, DollarSign } from 'lucide-react';
+
+interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  age_range: string;
+  total_orders: number;
+  total_spent: number;
+  last_purchase_date: string;
+  created_at: string;
+  updated_at: string;
+}
 
 export default function ProfilePage() {
-  const [customer, setCustomer] = useState<any>(null);
+  const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
 
-  useEffect(() => {
+  const fetchCustomer = useCallback(async () => {
     if (!user) {
       router.push('/login');
       return;
     }
-    fetchCustomer();
-  }, [user]);
-
-  async function fetchCustomer() {
     try {
       const { data, error } = await supabase
         .from('customers')
         .select('*')
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id)
         .single();
 
       if (error) throw error;
       setCustomer(data);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error fetching customer:', err);
     } finally {
       setLoading(false);
     }
-  }
+  }, [user, router]);
+
+  useEffect(() => {
+    fetchCustomer();
+  }, [fetchCustomer]);
 
   if (loading || !customer) {
     return (

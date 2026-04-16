@@ -6,13 +6,17 @@ import ProductCard from '@/components/ProductCard';
 import ProductSkeleton from '@/components/ProductSkeleton';
 import { Package, Search, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 
+interface ProductImage {
+  url: string;
+}
+
 interface Product {
   id: string;
   title: string;
   description: string;
   price: number | null;
   currency: string;
-  images: any[];
+  images: ProductImage[];
   category?: string;
   subcategory?: string;
   quantity: number;
@@ -43,8 +47,8 @@ export default function ProductsPage() {
 
       if (error) throw error;
       setProducts(data || []);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load products');
     } finally {
       setLoading(false);
     }
