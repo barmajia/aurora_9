@@ -1,0 +1,190 @@
+'use client';
+
+import Link from 'next/link';
+import { useState } from 'react';
+import { ShoppingBag, User, LogOut, Package, Menu, X, Heart, Store, Factory } from 'lucide-react';
+import { useCartStore } from '@/store/cart';
+import { useAuthStore } from '@/store/auth';
+import { useWishlistStore } from '@/store/wishlist';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
+
+export default function Header() {
+  const { items } = useCartStore();
+  const { user, logout } = useAuthStore();
+  const { items: wishlistItems } = useWishlistStore();
+  const router = useRouter();
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    logout();
+    router.push('/login');
+  };
+
+  return (
+    <>
+      <header className="header">
+        <div className="header-content">
+          <button
+            className="mobile-menu-btn"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+
+          <Link href="/" className="logo">
+            Aurora
+          </Link>
+
+          <nav className="nav desktop-nav">
+            <div className="nav-dropdown">
+              <Link href="/seller" className="nav-link">
+                <Store size={16} />
+                Sell
+              </Link>
+              <div className="nav-dropdown-content">
+                <Link href="/seller">Seller Portal</Link>
+                <Link href="/seller/login">Seller Login</Link>
+              </div>
+            </div>
+
+            <div className="nav-dropdown">
+              <Link href="/factory" className="nav-link">
+                <Factory size={16} />
+                Factory
+              </Link>
+              <div className="nav-dropdown-content">
+                <Link href="/factory">Factory Portal</Link>
+                <Link href="/factory/login">Factory Login</Link>
+              </div>
+            </div>
+
+            <Link href="/products" className="nav-link">Products</Link>
+            
+            {user ? (
+              <>
+                {user.role === 'seller' && (
+                  <Link href="/seller/dashboard" className="nav-link">Dashboard</Link>
+                )}
+                {user.role === 'factory' && (
+                  <Link href="/factory/dashboard" className="nav-link">Dashboard</Link>
+                )}
+                {user.role === 'customer' && (
+                  <>
+                    <Link href="/profile" className="nav-link">Profile</Link>
+                    <Link href="/wishlist" className="nav-link">
+                      <Heart size={20} />
+                      {wishlistItems.length > 0 && (
+                        <span className="badge">{wishlistItems.length}</span>
+                      )}
+                    </Link>
+                    <Link href="/cart" className="nav-link cart-link">
+                      <ShoppingBag size={20} />
+                      {totalItems > 0 && (
+                        <span className="badge">{totalItems}</span>
+                      )}
+                    </Link>
+                  </>
+                )}
+                <button onClick={handleLogout} className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--secondary)' }}>
+                  <LogOut size={20} />
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="nav-link">Login</Link>
+                <Link href="/signup" className="btn-primary" style={{ padding: '0.5rem 1.5rem', fontSize: '0.9rem' }}>
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </nav>
+
+          <nav className="nav mobile-nav">
+            <Link href="/cart" className="nav-icon-link">
+              <ShoppingBag size={22} />
+              {totalItems > 0 && <span className="badge">{totalItems}</span>}
+            </Link>
+            {user && (
+              <Link href="/wishlist" className="nav-icon-link">
+                <Heart size={22} />
+                {wishlistItems.length > 0 && <span className="badge">{wishlistItems.length}</span>}
+              </Link>
+            )}
+          </nav>
+        </div>
+      </header>
+
+      {mobileMenuOpen && (
+        <div className="mobile-menu">
+          <nav className="mobile-nav-content">
+            <Link href="/products" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+              <Package size={20} />
+              Products
+            </Link>
+            
+            <Link href="/seller" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+              <Store size={20} />
+              Sell on Aurora
+            </Link>
+
+            <Link href="/factory" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+              <Factory size={20} />
+              Factory Portal
+            </Link>
+            
+            {user ? (
+              <>
+                {user.role === 'seller' && (
+                  <Link href="/seller/dashboard" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                    <Package size={20} />
+                    Seller Dashboard
+                  </Link>
+                )}
+                {user.role === 'factory' && (
+                  <Link href="/factory/dashboard" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                    <Factory size={20} />
+                    Factory Dashboard
+                  </Link>
+                )}
+                {user.role === 'customer' && (
+                  <>
+                    <Link href="/profile" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                      <User size={20} />
+                      Profile
+                    </Link>
+                    <Link href="/wishlist" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                      <Heart size={20} />
+                      Wishlist ({wishlistItems.length})
+                    </Link>
+                    <Link href="/cart" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                      <ShoppingBag size={20} />
+                      Cart ({totalItems})
+                    </Link>
+                  </>
+                )}
+                <button onClick={handleLogout} className="mobile-nav-link logout-btn">
+                  <LogOut size={20} />
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                  <User size={20} />
+                  Login
+                </Link>
+                <Link href="/signup" className="mobile-nav-link highlight" onClick={() => setMobileMenuOpen(false)}>
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </nav>
+        </div>
+      )}
+    </>
+  );
+}

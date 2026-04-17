@@ -1,8 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-border: var(--glass-border);
+  
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+}
+
 :root {
-  --background: #0f0f1a;
-  --foreground: #e8e8f0;
+  --background: #050508;
+  --foreground: #f8fafc;
   --primary: #6366f1;
-  --primary-hover: #818cf8;
+  --primary-hover: #4f46e5;
   --secondary: #ec4899;
   --accent: #06b6d4;
   --glass-bg: rgba(255, 255, 255, 0.05);
@@ -1797,8 +1813,40 @@ main {
 }
 
 .loading-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 2rem;
-  padding: 2rem 0;
+   display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+   gap: 2rem;
+   padding: 2rem 0;
+}
+
+/* Light Theme */
+.light {
+  --background: #fafafa;
+  --foreground: #0f0f1a;
+  --primary: #6366f1;
+  --primary-hover: #818cf8;
+  --secondary: #ec4899;
+  --accent: #06b6d4;
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --gradient-1: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+  --gradient-2: linear-gradient(135deg, #06b6d4 0%, #6366f1 100%);
+}
+
+/* Dark Theme */
+.dark {
+  --background: #0f0f1a;
+  --foreground: #e8e8f0;
+  --primary: #6366f1;
+  --primary-hover: #818cf8;
+  --secondary: #ec4899;
+  --accent: #06b6d4;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --card-bg: rgba(30, 30, 50, 0.6);
+  --gradient-1: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+  --gradient-2: linear-gradient(135deg, #06b6d4 0%, #6366f1 100%);
 }

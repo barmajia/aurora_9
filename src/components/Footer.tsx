@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Mail, Phone, MapPin, Github, Twitter, Instagram } from 'lucide-react';
+import { Mail, Phone, MapPin, CodeXml, Globe, Camera } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -13,14 +13,14 @@ export default function Footer() {
             Your destination for premium products with an exceptional shopping experience.
           </p>
           <div className="footer-social">
-            <a href="#" className="social-link" aria-label="Twitter">
-              <Twitter size={20} />
+            <a href="#" className="social-link" aria-label="Global">
+              <Globe size={20} />
             </a>
-            <a href="#" className="social-link" aria-label="Instagram">
-              <Instagram size={20} />
+            <a href="#" className="social-link" aria-label="Photography">
+              <Camera size={20} />
             </a>
-            <a href="#" className="social-link" aria-label="GitHub">
-              <Github size={20} />
+            <a href="#" className="social-link" aria-label="Development">
+              <CodeXml size={20} />
             </a>
           </div>
         </div>
