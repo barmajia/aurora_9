@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useAuthStore } from '@/store/auth';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { 
-  LayoutDashboard, Package, BarChart3, Users, MessageSquare, 
-  Settings, LogOut, Factory, Bell, ChevronRight, TrendingUp,
-  ShoppingCart, DollarSign, MapPin, Star
+   LayoutDashboard, Package, BarChart3, Users, MessageSquare, 
+   Settings, LogOut, Factory, Bell, ChevronRight, TrendingUp,
+   ShoppingCart, DollarSign, MapPin, Star, Globe
 } from 'lucide-react';
 
 interface FactoryData {
@@ -41,12 +42,20 @@ interface Connection {
   created_at: string;
 }
 
+interface Site {
+  id: string;
+  name: string;
+  slug: string | null;
+  is_published: boolean;
+}
+
 export default function FactoryDashboard() {
   const { user, logout } = useAuthStore();
   const router = useRouter();
   const [factory, setFactory] = useState<FactoryData | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [connections, setConnections] = useState<Connection[]>([]);
+  const [sites, setSites] = useState<Site[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -85,6 +94,14 @@ export default function FactoryDashboard() {
         .eq('factory_id', user.id);
       
       if (connectionsData) setConnections(connectionsData);
+
+      const { data: sitesData } = await supabase
+        .from('site_builds')
+        .select('id, name, slug, is_published')
+        .eq('user_id', user.id)
+        .limit(3);
+      
+      if (sitesData) setSites(sitesData);
     } catch (err) {
       console.error('Error fetching data:', err);
     } finally {
@@ -248,11 +265,15 @@ export default function FactoryDashboard() {
               ) : (
                 products.map((product) => (
                   <div key={product.id} className="product-item">
-                    <img 
-                      src={product.images?.[0]?.url || 'https://via.placeholder.com/60'} 
-                      alt={product.title}
-                      className="product-thumb"
-                    />
+<Image
+                       src={product.images?.[0]?.url || '/images/placeholder.jpg'}
+                       alt={product.title}
+                       className="product-thumb"
+                       width={60}
+                       height={60}
+                       placeholder="blur"
+                       blurDataURL="/images/placeholder.jpg"
+                     />
                     <div className="product-info">
                       <h4>{product.title}</h4>
                       <span className="product-category">{product.category || 'Uncategorized'}</span>
@@ -295,6 +316,35 @@ export default function FactoryDashboard() {
               </div>
             </div>
           </section>
+
+          {sites.length > 0 && (
+            <section className="dashboard-section glass-card">
+              <div className="section-header">
+                <h2>My Factory Website</h2>
+                <Link href={`/builder/${sites[0].id}`} className="section-link">
+                  {sites[0]?.is_published ? 'Edit Site' : 'Publish'} <ChevronRight size={16} />
+                </Link>
+              </div>
+              <div className="products-list">
+                {sites.map((site) => (
+                  <div key={site.id} className="product-item">
+                    <div className="product-thumb" style={{ background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Globe size={24} className="text-gray-400" />
+                    </div>
+                    <div className="product-info">
+                      <h4>{site.name}</h4>
+                      <span className="product-category">{site.slug || 'No URL'}</span>
+                    </div>
+                    <div className="product-meta">
+                      <span className={`product-status ${site.is_published ? 'active' : 'draft'}`}>
+                        {site.is_published ? 'Published' : 'Draft'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </main>
     </div>

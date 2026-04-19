@@ -1029,7 +1029,104 @@ SET default_tablespace = '';
 SET default_table_access_method = "heap";
 
 
-CREATE TABLE IF NOT EXISTS "public"."admin_users" (
+CREATE TABLE IF NOT EXISTS "public"."site_templates" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "name" "text" NOT NULL,
+    "slug" "text" NOT NULL,
+    "description" "text",
+    "thumbnail_url" "text",
+    "preview_url" "text",
+    "category" "text" DEFAULT 'general'::"text",
+    "is_premium" boolean DEFAULT false,
+    "price" numeric(10,2) DEFAULT 0,
+    "is_public" boolean DEFAULT true,
+    "is_active" boolean DEFAULT true,
+    "json_schema" "jsonb" DEFAULT '{}'::"jsonb",
+    "created_by" "uuid",
+    "created_at" timestamp with time zone DEFAULT "now"(),
+    "updated_at" timestamp with time zone DEFAULT "now"()
+);
+
+CREATE TABLE IF NOT EXISTS "public"."site_builds" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "template_id" "uuid",
+    "template" "uuid",
+    "name" "text" NOT NULL,
+    "slug" "text",
+    "domain" "text",
+    "is_published" boolean DEFAULT false,
+    "published_at" timestamp with time zone,
+    "theme_config" "jsonb" DEFAULT '{"primaryColor": "#000000", "secondaryColor": "#ffffff", "fontFamily": "inter"}'::"jsonb",
+    "seo_config" "jsonb" DEFAULT '{"title": "", "description": "", "ogImage": ""}'::"jsonb",
+    "created_at" timestamp with time zone DEFAULT "now"(),
+    "updated_at" timestamp with time zone DEFAULT "now"()
+);
+
+CREATE TABLE IF NOT EXISTS "public"."site_pages" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "site_id" "uuid" NOT NULL,
+    "site_build" "uuid" NOT NULL,
+    "title" "text" NOT NULL,
+    "slug" "text" NOT NULL,
+    "page_type" "text" DEFAULT 'custom'::"text",
+    "is_homepage" boolean DEFAULT false,
+    "is_published" boolean DEFAULT false,
+    "published_at" timestamp with time zone,
+    "content" "jsonb" DEFAULT '{}'::"jsonb",
+    "sections" "jsonb" DEFAULT '[]'::"jsonb",
+    "seo_config" "jsonb" DEFAULT '{"title": "", "description": ""}'::"jsonb",
+    "display_order" integer DEFAULT 0,
+    "created_at" timestamp with time zone DEFAULT "now"(),
+    "updated_at" timestamp with time zone DEFAULT "now"()
+);
+
+CREATE TABLE IF NOT EXISTS "public"."landing_pages" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "name" "text" NOT NULL,
+    "slug" "text",
+    "template_id" "uuid",
+    "is_published" boolean DEFAULT false,
+    "published_url" "text",
+    "campaign_name" "text",
+    "campaign_source" "text",
+    "campaign_medium" "text",
+    "theme_config" "jsonb" DEFAULT '{}'::"jsonb",
+    "sections" "jsonb" DEFAULT '[]'::"jsonb",
+    "cta_config" "jsonb" DEFAULT '{"buttonText": "Shop Now", "buttonUrl": "/products", "position": "bottom"}'::"jsonb",
+    "analytics_config" "jsonb" DEFAULT '{"trackConversions": true, "trackClicks": true}'::"jsonb",
+    "views_count" integer DEFAULT 0,
+    "clicks_count" integer DEFAULT 0,
+    "conversions_count" integer DEFAULT 0,
+    "created_at" timestamp with time zone DEFAULT "now"(),
+    "updated_at" timestamp with time zone DEFAULT "now"()
+);
+
+CREATE TABLE IF NOT EXISTS "public"."builder_sessions" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "site_id" "uuid",
+    "page_id" "uuid",
+    "landing_page_id" "uuid",
+    "session_data" "jsonb" DEFAULT '{}'::"jsonb",
+    "is_active" boolean DEFAULT true,
+    "created_at" timestamp with time zone DEFAULT "now"(),
+    "updated_at" timestamp with time zone DEFAULT "now"()
+);
+
+CREATE TABLE IF NOT EXISTS "public"."site_custom_domains" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "site_id" "uuid" NOT NULL,
+    "domain" "text" NOT NULL,
+    "ssl_enabled" boolean DEFAULT false,
+    "ssl_cert_url" "text",
+    "ssl_expires_at" timestamp with time zone,
+    "is_verified" boolean DEFAULT false,
+    "verification_token" "text",
+    "created_at" timestamp with time zone DEFAULT "now"(),
+    "updated_at" timestamp with time zone DEFAULT "now"()
+);
     "user_id" "uuid" NOT NULL
 );
 
@@ -1743,6 +1840,30 @@ CREATE TABLE IF NOT EXISTS "public"."wishlist" (
 
 ALTER TABLE "public"."wishlist" OWNER TO "postgres";
 
+
+ALTER TABLE ONLY "public"."site_templates"
+    ADD CONSTRAINT "site_templates_pkey" PRIMARY KEY ("id");
+
+ALTER TABLE ONLY "public"."site_templates"
+    ADD CONSTRAINT "site_templates_slug_key" UNIQUE ("slug");
+
+ALTER TABLE ONLY "public"."site_builds"
+    ADD CONSTRAINT "site_builds_pkey" PRIMARY KEY ("id");
+
+ALTER TABLE ONLY "public"."site_pages"
+    ADD CONSTRAINT "site_pages_pkey" PRIMARY KEY ("id");
+
+ALTER TABLE ONLY "public"."landing_pages"
+    ADD CONSTRAINT "landing_pages_pkey" PRIMARY KEY ("id");
+
+ALTER TABLE ONLY "public"."builder_sessions"
+    ADD CONSTRAINT "builder_sessions_pkey" PRIMARY KEY ("id");
+
+ALTER TABLE ONLY "public"."site_custom_domains"
+    ADD CONSTRAINT "site_custom_domains_pkey" PRIMARY KEY ("id");
+
+ALTER TABLE ONLY "public"."site_custom_domains"
+    ADD CONSTRAINT "site_custom_domains_domain_key" UNIQUE ("domain");
 
 ALTER TABLE ONLY "public"."admin_users"
     ADD CONSTRAINT "admin_users_pkey" PRIMARY KEY ("user_id");
@@ -2497,6 +2618,36 @@ ALTER TABLE ONLY "public"."shipping_addresses"
 ALTER TABLE ONLY "public"."subcategories"
     ADD CONSTRAINT "subcategories_category_id_fkey" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE CASCADE;
 
+
+ALTER TABLE ONLY "public"."site_templates"
+    ADD CONSTRAINT "site_templates_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "auth"."users"("id") ON DELETE SET NULL;
+
+ALTER TABLE ONLY "public"."site_builds"
+    ADD CONSTRAINT "site_builds_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
+
+ALTER TABLE ONLY "public"."site_builds"
+    ADD CONSTRAINT "site_builds_template_id_fkey" FOREIGN KEY ("template_id") REFERENCES "public"."site_templates"("id") ON DELETE SET NULL;
+
+ALTER TABLE ONLY "public"."site_pages"
+    ADD CONSTRAINT "site_pages_site_id_fkey" FOREIGN KEY ("site_id") REFERENCES "public"."site_builds"("id") ON DELETE CASCADE;
+
+ALTER TABLE ONLY "public"."landing_pages"
+    ADD CONSTRAINT "landing_pages_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
+
+ALTER TABLE ONLY "public"."landing_pages"
+    ADD CONSTRAINT "landing_pages_template_id_fkey" FOREIGN KEY ("template_id") REFERENCES "public"."site_templates"("id") ON DELETE SET NULL;
+
+ALTER TABLE ONLY "public"."builder_sessions"
+    ADD CONSTRAINT "builder_sessions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
+
+ALTER TABLE ONLY "public"."builder_sessions"
+    ADD CONSTRAINT "builder_sessions_site_id_fkey" FOREIGN KEY ("site_id") REFERENCES "public"."site_builds"("id") ON DELETE CASCADE;
+
+ALTER TABLE ONLY "public"."builder_sessions"
+    ADD CONSTRAINT "builder_sessions_page_id_fkey" FOREIGN KEY ("page_id") REFERENCES "public"."site_pages"("id") ON DELETE CASCADE;
+
+ALTER TABLE ONLY "public"."site_custom_domains"
+    ADD CONSTRAINT "site_custom_domains_site_id_fkey" FOREIGN KEY ("site_id") REFERENCES "public"."site_builds"("id") ON DELETE CASCADE;
 
 
 ALTER TABLE ONLY "public"."users"
@@ -3409,6 +3560,26 @@ GRANT ALL ON TABLE "public"."subcategories" TO "anon";
 GRANT ALL ON TABLE "public"."subcategories" TO "authenticated";
 GRANT ALL ON TABLE "public"."subcategories" TO "service_role";
 
+
+
+GRANT ALL ON TABLE "public"."site_templates" TO "anon";
+GRANT ALL ON TABLE "public"."site_templates" TO "authenticated";
+GRANT ALL ON TABLE "public"."site_templates" TO "service_role";
+
+GRANT ALL ON TABLE "public"."site_builds" TO "authenticated";
+GRANT ALL ON TABLE "public"."site_builds" TO "service_role";
+
+GRANT ALL ON TABLE "public"."site_pages" TO "authenticated";
+GRANT ALL ON TABLE "public"."site_pages" TO "service_role";
+
+GRANT ALL ON TABLE "public"."landing_pages" TO "authenticated";
+GRANT ALL ON TABLE "public"."landing_pages" TO "service_role";
+
+GRANT ALL ON TABLE "public"."builder_sessions" TO "authenticated";
+GRANT ALL ON TABLE "public"."builder_sessions" TO "service_role";
+
+GRANT ALL ON TABLE "public"."site_custom_domains" TO "authenticated";
+GRANT ALL ON TABLE "public"."site_custom_domains" TO "service_role";
 
 
 GRANT ALL ON TABLE "public"."users" TO "anon";

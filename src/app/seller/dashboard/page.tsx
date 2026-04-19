@@ -1,14 +1,15 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth';
 import { supabase } from '@/lib/supabase';
 import { 
-  LayoutDashboard, Package, BarChart3, Users, MessageSquare, 
-  Settings, LogOut, Store, Bell, ChevronRight, TrendingUp,
-  ShoppingCart, DollarSign, Eye, Package as PackageIcon
+   LayoutDashboard, Package, BarChart3, Users, MessageSquare, 
+   Settings, LogOut, Store, Bell, ChevronRight, TrendingUp,
+   ShoppingCart, DollarSign, Eye, Package as PackageIcon, Globe
 } from 'lucide-react';
 
 interface SellerData {
@@ -34,6 +35,13 @@ interface OrderStats {
   total_revenue: number;
 }
 
+interface Site {
+  id: string;
+  name: string;
+  slug: string | null;
+  is_published: boolean;
+}
+
 export default function SellerDashboard() {
   const { user, logout } = useAuthStore();
   const router = useRouter();
@@ -41,6 +49,7 @@ export default function SellerDashboard() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<OrderStats>({ total_orders: 0, pending_orders: 0, total_revenue: 0 });
+  const [sites, setSites] = useState<Site[]>([]);
 
   useEffect(() => {
     if (!user || user.role !== 'seller') {
@@ -85,6 +94,14 @@ export default function SellerDashboard() {
           total_revenue: total 
         });
       }
+
+      const { data: sitesData } = await supabase
+        .from('site_builds')
+        .select('id, name, slug, is_published')
+        .eq('user_id', user.id)
+        .limit(3);
+      
+      if (sitesData) setSites(sitesData);
     } catch (err) {
       console.error('Error fetching data:', err);
     } finally {
@@ -245,11 +262,15 @@ export default function SellerDashboard() {
               ) : (
                 products.map((product) => (
                   <div key={product.id} className="product-item">
-                    <img 
-                      src={product.images?.[0]?.url || 'https://via.placeholder.com/60'} 
-                      alt={product.title}
-                      className="product-thumb"
-                    />
+<Image
+                       src={product.images?.[0]?.url || '/images/placeholder.jpg'}
+                       alt={product.title}
+                       className="product-thumb"
+                       width={60}
+                       height={60}
+                       placeholder="blur"
+                       blurDataURL="/images/placeholder.jpg"
+                     />
                     <div className="product-info">
                       <h4>{product.title}</h4>
                       <span className="product-category">{product.category || 'Uncategorized'}</span>
@@ -281,8 +302,41 @@ export default function SellerDashboard() {
                 <Settings size={24} />
                 Settings
               </Link>
+              <Link href={sites.length > 0 ? `/builder/${sites[0].id}` : '/templates'} className="quick-action glass-button">
+                <Globe size={24} />
+                {sites.length > 0 ? 'Edit Website' : 'Create Website'}
+              </Link>
             </div>
           </section>
+
+          {sites.length > 0 && (
+            <section className="dashboard-section glass-card">
+              <div className="section-header">
+                <h2>My Website</h2>
+                <Link href={sites.length > 0 ? `/builder/${sites[0].id}` : '/templates'} className="section-link">
+                  {sites[0]?.is_published ? 'Edit Site' : 'Publish'} <ChevronRight size={16} />
+                </Link>
+              </div>
+              <div className="products-list">
+                {sites.map((site) => (
+                  <div key={site.id} className="product-item">
+                    <div className="product-thumb" style={{ background: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Globe size={24} className="text-gray-400" />
+                    </div>
+                    <div className="product-info">
+                      <h4>{site.name}</h4>
+                      <span className="product-category">{site.slug || 'No URL'}</span>
+                    </div>
+                    <div className="product-meta">
+                      <span className={`product-status ${site.is_published ? 'active' : 'draft'}`}>
+                        {site.is_published ? 'Published' : 'Draft'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </main>
     </div>

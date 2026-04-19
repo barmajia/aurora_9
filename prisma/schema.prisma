@@ -1,13 +1,373 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
+// Full Prisma Schema for Aurora E-commerce
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+enum UserRole {
+  customer
+  seller
+  factory
+  admin
+}
+
+enum OrderStatus {
+  pending
+  processing
+  shipped
+  delivered
+  cancelled
+  refunded
+}
+
+enum ProductStatus {
+  active
+  inactive
+  archived
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  role          UserRole  @default(customer)
+  name          String?
+  phone         String?
+  avatar        String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  customer      Customer?
+  seller        Seller?
+  factory       Factory?
+  orders       Order[]
+  reviews      Review[]
+  wishlist      WishlistItem[]
+
+  // ⚠️ Password MUST be hashed using bcryptjs/argon2 before saving (server-side only)
+}
+
+model Customer {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String
+  email           String
+  phone           String?
+  ageRange        String?
+  totalOrders     Int       @default(0)
+  totalSpent      Float     @default(0)
+  lastPurchaseDate DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  orders          Order[]
+  addresses      Address[]
+  reviews        Review[]
+}
+
+model Seller {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storeName       String
+  storeDescription String?
+  logo            String?
+  banner          String?
+  rating          Float     @default(0)
+  totalSales      Float     @default(0)
+  totalOrders     Int       @default(0)
+  isVerified     Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  products        Product[]
+  orders         Order[]
+  analyticsData  AnalyticsData[]
+}
+
+model Factory {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  factoryName    String
+  description     String?
+  logo            String?
+  rating          Float     @default(0)
+  totalProduction Int       @default(0)
+  isVerified     Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  products        Product[]
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  image       String?
+  parentId   String?
+  parent     Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  products    Product[]
+  createdAt   DateTime  @default(now())
+}
+
+model Product {
+  id            String    @id @default(cuid())
+  title         String
+  slug         String    @unique
+  description  String?
+  price        Float
+  comparePrice Float?
+  currency     String    @default("USD")
+  sku          String?   @unique
+  stock        Int       @default(0)
+  status       ProductStatus @default(active)
+  images       ProductImage[]
+  categoryId   String?
+  category     Category? @relation(fields: [categoryId], references: [id])
+  sellerId     String?
+  seller       Seller?   @relation(fields: [sellerId], references: [id])
+  factoryId    String?
+  factory     Factory?  @relation(fields: [factoryId], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  orderItems   OrderItem[]
+  cartItems    CartItem[]
+  wishlistItems WishlistItem[]
+  reviews      Review[]
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  url       String
+  alt       String?
+  position  Int     @default(0)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  userId          String?
+  user            User?        @relation(fields: [userId], references: [id])
+  customerId      String?
+  customer        Customer?    @relation(fields: [customerId], references: [id])
+  sellerId        String?
+  seller          Seller?      @relation(fields: [sellerId], references: [id])
+  status          OrderStatus @default(pending)
+  subtotal       Float
+  tax            Float
+  shipping       Float
+  discount       Float       @default(0)
+  total          Float
+  shippingAddress String?
+  billingAddress  String?
+  paymentMethod  String?
+  paymentId      String?
+  notes          String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  items          OrderItem[]
+}
+
+model OrderItem {
+  id         String  @id @default(cuid())
+  orderId    String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId  String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float
+  total     Float
+}
+
+model CartItem {
+  id         String  @id @default(cuid())
+  sessionId  String?
+  userId    String?
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int     @default(1)
+  createdAt DateTime @default(now())
+}
+
+model WishlistItem {
+  id         String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+model Address {
+  id          String  @id @default(cuid())
+  customerId  String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  type       String  @default("shipping")
+  name       String
+  line1      String
+  line2      String?
+  city       String
+  state      String
+  postalCode String
+  country    String  @default("US")
+  isDefault  Boolean @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id])
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  rating     Int
+  title      String?
+  content    String?
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+model AdminUser {
+  userId      String   @id
+  createdAt   DateTime @default(now())
+}
+
+model AnalyticsData {
+  id          String   @id @default(cuid())
+  sellerId    String
+  seller      Seller   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  date        DateTime
+  views      Int      @default(0)
+  sales      Float    @default(0)
+  orders     Int      @default(0)
+  conversion Float    @default(0)
+  createdAt  DateTime  @default(now())
+
+  @@index([sellerId, date])
+}
+
+model SiteTemplate {
+  id            String    @id @default(cuid())
+  name          String
+  slug          String    @unique
+  description   String?
+  thumbnailUrl  String?
+  previewUrl    String?
+  category      String    @default("general")
+  isPremium     Boolean   @default(false)
+  price         Float     @default(0)
+  isPublic      Boolean   @default(true)
+  isActive      Boolean   @default(true)
+  jsonSchema    Json      @default("{}")
+  createdBy     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  siteBuilds    SiteBuild[]
+  landingPages  LandingPage[]
+}
+
+model SiteBuild {
+  id            String    @id @default(cuid())
+  userId        String
+  templateId    String?
+  template      SiteTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  name          String
+  slug          String?
+  domain        String?
+  isPublished   Boolean   @default(false)
+  publishedAt   DateTime?
+  themeConfig   Json      @default("{\"primaryColor\": \"#000000\", \"secondaryColor\": \"#ffffff\", \"fontFamily\": \"inter\"}")
+  seoConfig     Json      @default("{\"title\": \"\", \"description\": \"\", \"ogImage\": \"\"}")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  pages         SitePage[]
+  customDomains SiteCustomDomain[]
+}
+
+model SitePage {
+  id            String    @id @default(cuid())
+  siteId        String
+  siteBuild     SiteBuild @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  title         String
+  slug          String
+  pageType      String    @default("custom")
+  isHomepage    Boolean   @default(false)
+  isPublished   Boolean   @default(false)
+  publishedAt   DateTime?
+  content       Json      @default("{}")
+  sections      Json      @default("[]")
+  seoConfig     Json      @default("{\"title\": \"\", \"description\": \"\"}")
+  displayOrder  Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model LandingPage {
+  id              String    @id @default(cuid())
+  userId          String
+  name            String
+  slug            String?
+  templateId      String?
+  template        SiteTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  isPublished     Boolean   @default(false)
+  publishedUrl    String?
+  campaignName    String?
+  campaignSource  String?
+  campaignMedium  String?
+  themeConfig     Json      @default("{}")
+  sections        Json      @default("[]")
+  ctaConfig       Json      @default("{\"buttonText\": \"Shop Now\", \"buttonUrl\": \"/products\", \"position\": \"bottom\"}")
+  analyticsConfig Json      @default("{\"trackConversions\": true, \"trackClicks\": true}")
+  viewsCount      Int       @default(0)
+  clicksCount     Int       @default(0)
+  conversionsCount Int      @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model BuilderSession {
+  id             String    @id @default(cuid())
+  userId         String
+  siteId         String?
+  pageId         String?
+  landingPageId  String?
+  sessionData    Json      @default("{}")
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model SiteCustomDomain {
+  id              String    @id @default(cuid())
+  siteId          String
+  siteBuild       SiteBuild @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  domain          String    @unique
+  sslEnabled      Boolean   @default(false)
+  sslCertUrl      String?
+  sslExpiresAt    DateTime?
+  isVerified      Boolean   @default(false)
+  verificationToken String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }

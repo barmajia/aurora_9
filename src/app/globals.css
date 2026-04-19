@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./design-system.css";
 
 @theme {
   --color-background: var(--background);
@@ -14,20 +15,85 @@
   --radius-3xl: 1.5rem;
 }
 
-:root {
-  --background: #050508;
-  --foreground: #f8fafc;
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
-  --secondary: #ec4899;
-  --accent: #06b6d4;
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  --card-bg: rgba(30, 30, 50, 0.6);
-  --gradient-1: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
-  --gradient-2: linear-gradient(135deg, #06b6d4 0%, #6366f1 100%);
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--primary);
+  color: white;
+  padding: 8px 16px;
+  z-index: 100;
+  transition: top 0.2s;
 }
+
+.skip-link:focus {
+  top: 0;
+}
+
+.error-boundary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 2rem;
+}
+
+.error-content {
+  text-align: center;
+  max-width: 400px;
+}
+
+.error-icon {
+  color: var(--secondary);
+  margin-bottom: 1rem;
+}
+
+.error-content h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.error-content p {
+  color: white/60;
+  margin-bottom: 1.5rem;
+}
+
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #0e0e11;
+  --primary: #000000;
+  --primary-hover: #171717;
+  --secondary: #6366f1;
+  --accent: #71717a;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --glass-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  --card-bg: #fcfcfc;
+  --gradient-1: linear-gradient(135deg, #000000 0%, #3f3f46 100%);
+  --gradient-2: linear-gradient(135deg, #000000 0%, #71717a 100%);
+}
+
+.dark {
+  --background: #09090b;
+  --foreground: #f8fafc;
+  --primary: #ffffff;
+  --primary-hover: #f1f5f9;
+  --secondary: #818cf8;
+  --accent: #a1a1aa;
+  --glass-bg: rgba(9, 9, 11, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --card-bg: #111113;
+  --gradient-1: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
+  --gradient-2: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
+}
+
 
 * {
   box-sizing: border-box;
@@ -191,9 +257,6 @@ body {
 
 /* Main Container */
 main {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
   width: 100%;
 }
 

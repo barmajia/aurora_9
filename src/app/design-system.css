@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+/* 🫧 Aurora Minimal Design System (Clean Premium) */
+
+@theme {
+  --color-brand: #000000;
+  --color-border-subtle: rgba(0, 0, 0, 0.05);
+  --color-surface: #ffffff;
+  --color-surface-hover: #f9f9f9;
+  
+  --shadow-premium: 0 1px 3px rgba(0,0,0,0.02), 0 20px 50px rgba(0,0,0,0.05);
+  --shadow-hover: 0 1px 3px rgba(0,0,0,0.02), 0 30px 60px rgba(0,0,0,0.1);
+}
+
+/* ✨ Minimal Surface Cards */
+@utility aurora-card {
+  background: white;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 1.5rem;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-premium);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* 💠 Minimal Glass (Subtle) */
+@utility aurora-glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* 🌈 Elegant Typography Gradient */
+@utility aurora-gradient-text {
+  background: linear-gradient(135deg, #000 0%, #444 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 🌊 Micro-Shadow Textures */
+@utility noise-overlay {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.015;
+    pointer-events: none;
+    z-index: 10;
+  }
+}
+
+/* 🚲 Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@utility animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@utility animate-reveal {
+  animation: fade-in-up 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}

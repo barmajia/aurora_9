@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth';
 import { supabase } from '@/lib/supabase';
 import { 
-  BarChart3, TrendingUp, TrendingDown, DollarSign, Package, 
-  Users, Factory, Star, CheckCircle, Clock, ArrowUpRight, ArrowDownRight
+   BarChart3, TrendingUp, TrendingDown, DollarSign, Package, 
+   Users, Factory, Star, CheckCircle, Clock, ArrowUpRight, ArrowDownRight
 } from 'lucide-react';
 
 interface FactoryAnalytics {

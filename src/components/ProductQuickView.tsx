@@ -1,6 +1,7 @@
 'use client';
 
 import { X, Heart, ShoppingCart, Minus, Plus } from 'lucide-react';
+import Image from 'next/image';
 import { useState } from 'react';
 import { useCartStore } from '@/store/cart';
 import { useWishlistStore } from '@/store/wishlist';
@@ -77,11 +78,15 @@ export default function ProductQuickView({ product, isOpen, onClose }: ProductQu
         </button>
 
         <div className="quick-view-grid">
-          <div className="quick-view-image">
-            <img
-              src={product.images?.[0]?.url || 'https://via.placeholder.com/500x500?text=No+Image'}
-              alt={product.title}
-            />
+<div className="quick-view-image">
+             <Image
+               src={product.images?.[0]?.url || '/images/placeholder.jpg'}
+               alt={product.title}
+               width={500}
+               height={500}
+               placeholder="blur"
+               blurDataURL="/images/placeholder.jpg"
+             />
             <button
               className={`wishlist-btn ${inWishlist ? 'active' : ''}`}
               onClick={handleWishlist}
