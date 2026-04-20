@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import ProductCard from '../ProductCard';
-import type { Product } from '@/types';
+import ProductCard from "../ProductCard";
+import type { Product } from "@/types";
 
 export function ProductGrid({ products }: { products: Product[] }) {
   return (

@@ -1,38 +1,38 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
-import Image from 'next/image';
-import { Heart, Trash2, ShoppingCart, Package } from 'lucide-react';
-import { useWishlistStore } from '@/store/wishlist';
-import { useCartStore } from '@/store/cart';
-import { useToastStore } from '@/store/toast';
-import { Button, Card } from '@/components/ui';
-  import type { WishlistItem } from '@/types';
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
+import Image from "next/image";
+import { Heart, Trash2, ShoppingCart, Package } from "lucide-react";
+import { useWishlistStore } from "@/store/wishlist";
+import { useCartStore } from "@/store/cart";
+import { useToastStore } from "@/store/toast";
+import { Button, Card } from "@/components/ui";
+import type { WishlistItem } from "@/types";
 
-  export default function WishlistPage() {
-    const { t } = useTranslation();
-    const { items, removeItem } = useWishlistStore();
-    const addItem = useCartStore((state) => state.addItem);
-    const addToast = useToastStore((state) => state.addToast);
+export default function WishlistPage() {
+  const { t } = useTranslation();
+  const { items, removeItem } = useWishlistStore();
+  const addItem = useCartStore((state) => state.addItem);
+  const addToast = useToastStore((state) => state.addToast);
 
-    const handleMoveToCart = (item: WishlistItem) => {
+  const handleMoveToCart = (item: WishlistItem) => {
     addItem({
       id: item.id,
       name: item.name,
       price: item.price,
       image: item.image,
       category: item.category,
-      description: item.description || '',
+      description: item.description || "",
     });
     removeItem(item.id);
-    addToast(`${item.name} moved to cart`, 'success');
+    addToast(`${item.name} moved to cart`, "success");
   };
 
   const handleRemove = (id: string) => {
     removeItem(id);
-    addToast('Removed from wishlist', 'info');
+    addToast("Removed from wishlist", "info");
   };
 
   if (items.length === 0) {
@@ -47,7 +47,9 @@ import { Button, Card } from '@/components/ui';
             <Heart className="text-primary" size={40} />
           </div>
           <h1 className="text-2xl font-bold mb-2">Your wishlist is empty</h1>
-          <p className="text-white/50 mb-6">Save items you love by clicking the heart icon</p>
+          <p className="text-white/50 mb-6">
+            Save items you love by clicking the heart icon
+          </p>
           <Link href="/products">
             <Button>Browse Products</Button>
           </Link>
@@ -65,10 +67,13 @@ import { Button, Card } from '@/components/ui';
           className="mb-8"
         >
           <h1 className="text-4xl font-black italic tracking-tighter mb-2">
-            My <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Wishlist</span>
+            My{" "}
+            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Wishlist
+            </span>
           </h1>
           <p className="text-white/50">
-            {items.length} {items.length === 1 ? 'item' : 'items'} saved
+            {items.length} {items.length === 1 ? "item" : "items"} saved
           </p>
         </motion.div>
 
@@ -90,14 +95,27 @@ import { Button, Card } from '@/components/ui';
                       className="object-cover"
                     />
                   </div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-white/40">{item.category}</span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-white/40">
+                    {item.category}
+                  </span>
                   <h3 className="font-bold mb-2">{item.name}</h3>
-                  <p className="text-xl font-black italic text-primary mb-4">${item.price.toFixed(2)}</p>
+                  <p className="text-xl font-black italic text-primary mb-4">
+                    ${item.price.toFixed(2)}
+                  </p>
                   <div className="flex gap-2">
-                    <Button size="sm" className="flex-1" onClick={() => handleMoveToCart(item)} leftIcon={<ShoppingCart size={16} />}>
+                    <Button
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => handleMoveToCart(item)}
+                      leftIcon={<ShoppingCart size={16} />}
+                    >
                       Move to Cart
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => handleRemove(item.id)}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemove(item.id)}
+                    >
                       <Trash2 size={16} />
                     </Button>
                   </div>

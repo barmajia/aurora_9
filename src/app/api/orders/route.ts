@@ -1,27 +1,30 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { NextRequest, NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
-    const orderId = searchParams.get('orderId');
-    const status = searchParams.get('status');
+    const userId = searchParams.get("userId");
+    const orderId = searchParams.get("orderId");
+    const status = searchParams.get("status");
 
-    let query = supabase.from('orders').select('*').order('created_at', { ascending: false });
+    let query = supabase
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (userId) {
-      query = query.eq('user_id', userId);
+      query = query.eq("user_id", userId);
     }
 
     if (status) {
-      query = query.eq('status', status);
+      query = query.eq("status", status);
     }
 
     const { data: orders, error } = await query;
 
     if (orderId && orders) {
-      const order = orders.find(o => o.id === orderId);
+      const order = orders.find((o) => o.id === orderId);
       return NextResponse.json({ orders: order ? [order] : [] });
     }
 
@@ -29,10 +32,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ orders: orders || [] });
   } catch (error) {
-    console.error('Orders fetch error:', error);
+    console.error("Orders fetch error:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch orders' },
-      { status: 500 }
+      { error: "Failed to fetch orders" },
+      { status: 500 },
     );
   }
 }
@@ -44,20 +47,22 @@ export async function POST(request: NextRequest) {
 
     if (!orderId) {
       return NextResponse.json(
-        { error: 'Order ID is required' },
-        { status: 400 }
+        { error: "Order ID is required" },
+        { status: 400 },
       );
     }
 
-    const updates: Record<string, string | Date> = { updated_at: new Date().toISOString() };
-    
+    const updates: Record<string, string | Date> = {
+      updated_at: new Date().toISOString(),
+    };
+
     if (status) updates.status = status;
     if (notes) updates.notes = notes;
 
     const { data: order, error } = await supabase
-      .from('orders')
+      .from("orders")
       .update(updates)
-      .eq('id', orderId)
+      .eq("id", orderId)
       .select()
       .single();
 
@@ -65,10 +70,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ order });
   } catch (error) {
-    console.error('Order update error:', error);
+    console.error("Order update error:", error);
     return NextResponse.json(
-      { error: 'Failed to update order' },
-      { status: 500 }
+      { error: "Failed to update order" },
+      { status: 500 },
     );
   }
 }
