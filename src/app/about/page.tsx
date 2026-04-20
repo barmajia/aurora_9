@@ -1,25 +1,42 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
-import { Sparkles, Users, Award, TrendingUp, Globe, Heart } from 'lucide-react';
-import { Card } from '@/components/ui';
+import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
+import { Sparkles, Users, Award, TrendingUp, Globe, Heart } from "lucide-react";
+import { Card } from "@/components/ui";
 
 export default function AboutPage() {
   const { t } = useTranslation();
 
   const stats = [
-    { label: 'Products', value: '500+' },
-    { label: 'Customers', value: '10K+' },
-    { label: 'Sellers', value: '500+' },
-    { label: 'Countries', value: '30+' },
+    { label: "Products", value: "500+" },
+    { label: "Customers", value: "10K+" },
+    { label: "Sellers", value: "500+" },
+    { label: "Countries", value: "30+" },
   ];
 
   const values = [
-    { icon: Sparkles, title: 'Quality First', description: 'We curate only the finest products to ensure exceptional quality.' },
-    { icon: Users, title: 'Customer Focus', description: 'Your satisfaction is our top priority.' },
-    { icon: TrendingUp, title: 'Continuous Growth', description: 'Constantly improving to serve you better.' },
-    { icon: Globe, title: 'Global Reach', description: 'Serving customers worldwide with love.' },
+    {
+      icon: Sparkles,
+      title: "Quality First",
+      description:
+        "We curate only the finest products to ensure exceptional quality.",
+    },
+    {
+      icon: Users,
+      title: "Customer Focus",
+      description: "Your satisfaction is our top priority.",
+    },
+    {
+      icon: TrendingUp,
+      title: "Continuous Growth",
+      description: "Constantly improving to serve you better.",
+    },
+    {
+      icon: Globe,
+      title: "Global Reach",
+      description: "Serving customers worldwide with love.",
+    },
   ];
 
   return (
@@ -31,10 +48,14 @@ export default function AboutPage() {
           className="text-center mb-16"
         >
           <h1 className="text-4xl md:text-6xl font-black italic tracking-tighter mb-4">
-            About <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Aurora</span>
+            About{" "}
+            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Aurora
+            </span>
           </h1>
           <p className="text-xl text-white/50 max-w-2xl mx-auto">
-            We believe in the power of exceptional products to transform your life.
+            We believe in the power of exceptional products to transform your
+            life.
           </p>
         </motion.div>
 
@@ -49,7 +70,9 @@ export default function AboutPage() {
               <div className="text-3xl font-black italic bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 {stat.value}
               </div>
-              <div className="text-xs font-bold uppercase tracking-wider text-white/40 mt-2">{stat.label}</div>
+              <div className="text-xs font-bold uppercase tracking-wider text-white/40 mt-2">
+                {stat.label}
+              </div>
             </Card>
           ))}
         </motion.div>
@@ -60,12 +83,16 @@ export default function AboutPage() {
           </h2>
           <Card>
             <p className="text-white/70 leading-relaxed mb-4">
-              Aurora was born from a simple idea: everyone deserves access to premium products without compromise. 
-              We founded our platform with a mission to connect quality manufacturers directly with customers who appreciate excellence.
+              Aurora was born from a simple idea: everyone deserves access to
+              premium products without compromise. We founded our platform with
+              a mission to connect quality manufacturers directly with customers
+              who appreciate excellence.
             </p>
             <p className="text-white/70 leading-relaxed">
-              What started as a small dream has grown into a thriving ecosystem connecting hundreds of sellers with 
-              thousands of happy customers worldwide. We continue to innovate and expand, always staying true to our core values.
+              What started as a small dream has grown into a thriving ecosystem
+              connecting hundreds of sellers with thousands of happy customers
+              worldwide. We continue to innovate and expand, always staying true
+              to our core values.
             </p>
           </Card>
         </section>
@@ -89,7 +116,9 @@ export default function AboutPage() {
                     </div>
                     <div>
                       <h3 className="font-bold mb-2">{value.title}</h3>
-                      <p className="text-white/50 text-sm">{value.description}</p>
+                      <p className="text-white/50 text-sm">
+                        {value.description}
+                      </p>
                     </div>
                   </div>
                 </Card>
@@ -104,7 +133,8 @@ export default function AboutPage() {
           </h2>
           <Card className="text-center py-12">
             <p className="text-2xl md:text-3xl font-black italic tracking-tight text-white/80">
-              "To make premium quality accessible to everyone, everywhere."
+              &quot;To make premium quality accessible to everyone,
+              everywhere.&quot;
             </p>
           </Card>
         </section>

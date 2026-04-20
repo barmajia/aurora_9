@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const updates: Record<string, any> = { updated_at: new Date().toISOString() };
+    const updates: Record<string, string | Date> = { updated_at: new Date().toISOString() };
     
     if (status) updates.status = status;
     if (notes) updates.notes = notes;

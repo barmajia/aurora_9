@@ -1,11 +1,12 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface User {
   id: string;
   email: string;
   name?: string;
-  role: 'customer' | 'seller' | 'factory';
+  avatar_url?: string;
+  role: "customer" | "seller" | "factory";
 }
 
 interface AuthState {
@@ -26,7 +27,7 @@ export const useAuthStore = create<AuthState>()(
       logout: () => set({ user: null }),
     }),
     {
-      name: 'auth-storage',
-    }
-  )
+      name: "auth-storage",
+    },
+  ),
 );

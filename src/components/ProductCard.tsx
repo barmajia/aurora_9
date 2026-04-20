@@ -169,7 +169,7 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
 
       <ProductQuickView
-        product={product as any}
+        product={product}
         isOpen={isQuickViewOpen}
         onClose={() => setIsQuickViewOpen(false)}
       />

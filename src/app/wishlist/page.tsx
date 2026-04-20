@@ -9,14 +9,15 @@ import { useWishlistStore } from '@/store/wishlist';
 import { useCartStore } from '@/store/cart';
 import { useToastStore } from '@/store/toast';
 import { Button, Card } from '@/components/ui';
+  import type { WishlistItem } from '@/types';
 
-export default function WishlistPage() {
-  const { t } = useTranslation();
-  const { items, removeItem } = useWishlistStore();
-  const addItem = useCartStore((state) => state.addItem);
-  const addToast = useToastStore((state) => state.addToast);
+  export default function WishlistPage() {
+    const { t } = useTranslation();
+    const { items, removeItem } = useWishlistStore();
+    const addItem = useCartStore((state) => state.addItem);
+    const addToast = useToastStore((state) => state.addToast);
 
-  const handleMoveToCart = (item: any) => {
+    const handleMoveToCart = (item: WishlistItem) => {
     addItem({
       id: item.id,
       name: item.name,

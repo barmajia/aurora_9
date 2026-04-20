@@ -1,95 +1,89 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Card } from '@/components/ui/Card';
-import { Modal } from '@/components/ui/Modal';
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Card } from "@/components/ui/Card";
+import { Modal } from "@/components/ui/Modal";
 
-type Tab = 'products' | 'sellers' | 'factories' | 'middlemen';
+type Tab = "products" | "sellers" | "factories" | "middlemen";
 
 type Item = Record<string, unknown>;
 
 export default function AdminDashboard() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<Tab>('products');
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      Boolean(localStorage.getItem("admin_auth")),
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<Tab>("products");
   const [items, setItems] = useState<Item[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
-    const auth = localStorage.getItem('admin_auth');
-    if (auth) {
-      setIsAuthenticated(true);
-    }
-    setIsLoading(false);
-  }, []);
+    if (!isAuthenticated) return;
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchItems();
-    }
-  }, [isAuthenticated, activeTab]);
-
-  const fetchItems = async () => {
-    setIsLoading(true);
-    try {
-      const endpoints: Record<Tab, string> = {
-        products: '/api/admin/products',
-        sellers: '/api/admin/sellers',
-        factories: '/api/admin/factories',
-        middlemen: '/api/admin/middlemen',
-      };
-      const res = await fetch(endpoints[activeTab]);
-      if (res.ok) {
-        const data = await res.json();
-        setItems(data);
-      } else {
+    const fetchItems = async () => {
+      setIsLoading(true);
+      try {
+        const endpoints: Record<Tab, string> = {
+          products: "/api/admin/products",
+          sellers: "/api/admin/sellers",
+          factories: "/api/admin/factories",
+          middlemen: "/api/admin/middlemen",
+        };
+        const res = await fetch(endpoints[activeTab]);
+        if (res.ok) {
+          const data = await res.json();
+          setItems(data);
+        } else {
+          setItems([]);
+        }
+      } catch {
         setItems([]);
       }
-    } catch {
-      setItems([]);
-    }
-    setIsLoading(false);
-  };
+      setIsLoading(false);
+    };
+
+    fetchItems();
+  }, [isAuthenticated, activeTab]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const res = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
       if (res.ok) {
         setIsAuthenticated(true);
-        localStorage.setItem('admin_auth', 'true');
+        localStorage.setItem("admin_auth", "true");
       }
-    } catch {
-    }
+    } catch {}
     setIsSubmitting(false);
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this item?')) return;
+    if (!confirm("Are you sure you want to delete this item?")) return;
     setIsSubmitting(true);
     try {
       const endpoints: Record<Tab, string> = {
-        products: '/api/admin/products',
-        sellers: '/api/admin/sellers',
-        factories: '/api/admin/factories',
-        middlemen: '/api/admin/middlemen',
+        products: "/api/admin/products",
+        sellers: "/api/admin/sellers",
+        factories: "/api/admin/factories",
+        middlemen: "/api/admin/middlemen",
       };
-      await fetch(`${endpoints[activeTab]}?id=${id}`, { method: 'DELETE' });
+      await fetch(`${endpoints[activeTab]}?id=${id}`, { method: "DELETE" });
       fetchItems();
-    } catch {
-    }
+    } catch {}
     setIsSubmitting(false);
   };
 
@@ -98,22 +92,21 @@ export default function AdminDashboard() {
     setIsSubmitting(true);
     try {
       const endpoints: Record<Tab, string> = {
-        products: '/api/admin/products',
-        sellers: '/api/admin/sellers',
-        factories: '/api/admin/factories',
-        middlemen: '/api/admin/middlemen',
+        products: "/api/admin/products",
+        sellers: "/api/admin/sellers",
+        factories: "/api/admin/factories",
+        middlemen: "/api/admin/middlemen",
       };
-      const method = editingItem ? 'PUT' : 'POST';
+      const method = editingItem ? "PUT" : "POST";
       await fetch(endpoints[activeTab], {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(editingItem),
       });
       setIsModalOpen(false);
       setEditingItem(null);
       fetchItems();
-    } catch {
-    }
+    } catch {}
     setIsSubmitting(false);
   };
 
@@ -123,28 +116,32 @@ export default function AdminDashboard() {
   };
 
   const getItemName = (item: Item): string => {
-    if (activeTab === 'products') return String(item.title || '');
-    if (activeTab === 'sellers') return String(item.storeName || '');
-    if (activeTab === 'factories') return String(item.factoryName || '');
-    if (activeTab === 'middlemen') return String(item.name || '');
-    return '-';
+    if (activeTab === "products") return String(item.title || "");
+    if (activeTab === "sellers") return String(item.storeName || "");
+    if (activeTab === "factories") return String(item.factoryName || "");
+    if (activeTab === "middlemen") return String(item.name || "");
+    return "-";
   };
 
   const getItemDetails = (item: Item): string => {
-    if (activeTab === 'products') return `$${item.price ?? 0}`;
+    if (activeTab === "products") return `$${item.price ?? 0}`;
     return `★ ${item.rating ?? 0}`;
   };
 
   const getItemStatus = (item: Item): string => {
-    if (activeTab === 'products') return String(item.status || 'inactive');
-    if (activeTab === 'sellers' || activeTab === 'factories' || activeTab === 'middlemen') {
-      return item.isVerified ? 'Verified' : 'Pending';
+    if (activeTab === "products") return String(item.status || "inactive");
+    if (
+      activeTab === "sellers" ||
+      activeTab === "factories" ||
+      activeTab === "middlemen"
+    ) {
+      return item.isVerified ? "Verified" : "Pending";
     }
-    return '-';
+    return "-";
   };
 
   const isStatusActive = (item: Item): boolean => {
-    if (activeTab === 'products') return item.status === 'active';
+    if (activeTab === "products") return item.status === "active";
     return Boolean(item.isVerified);
   };
 
@@ -189,10 +186,10 @@ export default function AdminDashboard() {
   }
 
   const tabs: { key: Tab; label: string }[] = [
-    { key: 'products', label: 'Products' },
-    { key: 'sellers', label: 'Sellers' },
-    { key: 'factories', label: 'Factories' },
-    { key: 'middlemen', label: 'Middlemen' },
+    { key: "products", label: "Products" },
+    { key: "sellers", label: "Sellers" },
+    { key: "factories", label: "Factories" },
+    { key: "middlemen", label: "Middlemen" },
   ];
 
   return (
@@ -207,7 +204,7 @@ export default function AdminDashboard() {
             variant="ghost"
             size="sm"
             onClick={() => {
-              localStorage.removeItem('admin_auth');
+              localStorage.removeItem("admin_auth");
               setIsAuthenticated(false);
             }}
           >
@@ -219,7 +216,7 @@ export default function AdminDashboard() {
           {tabs.map((tab) => (
             <Button
               key={tab.key}
-              variant={activeTab === tab.key ? 'primary' : 'ghost'}
+              variant={activeTab === tab.key ? "primary" : "ghost"}
               size="sm"
               onClick={() => setActiveTab(tab.key)}
             >
@@ -230,7 +227,9 @@ export default function AdminDashboard() {
 
         <Card className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-white capitalize">{activeTab}</h2>
+            <h2 className="text-xl font-semibold text-white capitalize">
+              {activeTab}
+            </h2>
             <Button size="sm" onClick={() => openModal()}>
               Add New
             </Button>
@@ -248,8 +247,12 @@ export default function AdminDashboard() {
                 <thead>
                   <tr className="border-b border-glass-border">
                     <th className="text-left text-white/60 pb-3 pr-4">Name</th>
-                    <th className="text-left text-white/60 pb-3 pr-4">Details</th>
-                    <th className="text-left text-white/60 pb-3 pr-4">Status</th>
+                    <th className="text-left text-white/60 pb-3 pr-4">
+                      Details
+                    </th>
+                    <th className="text-left text-white/60 pb-3 pr-4">
+                      Status
+                    </th>
                     <th className="text-right text-white/60 pb-3">Actions</th>
                   </tr>
                 </thead>
@@ -270,16 +273,26 @@ export default function AdminDashboard() {
                           {getItemDetails(item)}
                         </td>
                         <td className="py-4 pr-4">
-                          <span className={`inline-block px-2 py-1 rounded text-xs ${isStatusActive(item) ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                          <span
+                            className={`inline-block px-2 py-1 rounded text-xs ${isStatusActive(item) ? "bg-green-500/20 text-green-400" : "bg-yellow-500/20 text-yellow-400"}`}
+                          >
                             {getItemStatus(item)}
                           </span>
                         </td>
                         <td className="py-4 text-right">
                           <div className="flex gap-2 justify-end">
-                            <Button size="sm" variant="ghost" onClick={() => openModal(item)}>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => openModal(item)}
+                            >
                               Edit
                             </Button>
-                            <Button size="sm" variant="danger" onClick={() => handleDelete(String(item.id))}>
+                            <Button
+                              size="sm"
+                              variant="danger"
+                              onClick={() => handleDelete(String(item.id))}
+                            >
                               Delete
                             </Button>
                           </div>
@@ -294,58 +307,103 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingItem ? 'Edit' : 'Add New'}>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={editingItem ? "Edit" : "Add New"}
+      >
         <form onSubmit={handleSubmit} className="space-y-4">
-          {activeTab === 'products' && (
+          {activeTab === "products" && (
             <>
               <Input
                 label="Title"
-                value={String(editingItem?.title || '')}
-                onChange={(e) => setEditingItem((prev) => prev ? { ...prev, title: e.target.value } : { title: e.target.value })}
+                value={String(editingItem?.title || "")}
+                onChange={(e) =>
+                  setEditingItem((prev) =>
+                    prev
+                      ? { ...prev, title: e.target.value }
+                      : { title: e.target.value },
+                  )
+                }
                 required
               />
               <Input
                 label="Price"
                 type="number"
-                value={String(editingItem?.price || '')}
-                onChange={(e) => setEditingItem((prev) => prev ? { ...prev, price: parseFloat(e.target.value) } : { price: parseFloat(e.target.value) })}
+                value={String(editingItem?.price || "")}
+                onChange={(e) =>
+                  setEditingItem((prev) =>
+                    prev
+                      ? { ...prev, price: parseFloat(e.target.value) }
+                      : { price: parseFloat(e.target.value) },
+                  )
+                }
                 required
               />
               <Input
                 label="Stock"
                 type="number"
-                value={String(editingItem?.stock || '')}
-                onChange={(e) => setEditingItem((prev) => prev ? { ...prev, stock: parseInt(e.target.value) } : { stock: parseInt(e.target.value) })}
+                value={String(editingItem?.stock || "")}
+                onChange={(e) =>
+                  setEditingItem((prev) =>
+                    prev
+                      ? { ...prev, stock: parseInt(e.target.value) }
+                      : { stock: parseInt(e.target.value) },
+                  )
+                }
                 required
               />
             </>
           )}
-          {activeTab === 'sellers' && (
+          {activeTab === "sellers" && (
             <Input
               label="Store Name"
-              value={String(editingItem?.storeName || '')}
-              onChange={(e) => setEditingItem((prev) => prev ? { ...prev, storeName: e.target.value } : { storeName: e.target.value })}
+              value={String(editingItem?.storeName || "")}
+              onChange={(e) =>
+                setEditingItem((prev) =>
+                  prev
+                    ? { ...prev, storeName: e.target.value }
+                    : { storeName: e.target.value },
+                )
+              }
               required
             />
           )}
-          {activeTab === 'factories' && (
+          {activeTab === "factories" && (
             <Input
               label="Factory Name"
-              value={String(editingItem?.factoryName || '')}
-              onChange={(e) => setEditingItem((prev) => prev ? { ...prev, factoryName: e.target.value } : { factoryName: e.target.value })}
+              value={String(editingItem?.factoryName || "")}
+              onChange={(e) =>
+                setEditingItem((prev) =>
+                  prev
+                    ? { ...prev, factoryName: e.target.value }
+                    : { factoryName: e.target.value },
+                )
+              }
               required
             />
           )}
-          {activeTab === 'middlemen' && (
+          {activeTab === "middlemen" && (
             <Input
               label="Name"
-              value={String(editingItem?.name || '')}
-              onChange={(e) => setEditingItem((prev) => prev ? { ...prev, name: e.target.value } : { name: e.target.value })}
+              value={String(editingItem?.name || "")}
+              onChange={(e) =>
+                setEditingItem((prev) =>
+                  prev
+                    ? { ...prev, name: e.target.value }
+                    : { name: e.target.value },
+                )
+              }
               required
             />
           )}
           <div className="flex gap-4 pt-4">
-            <Button type="button" variant="ghost" className="flex-1" onClick={() => setIsModalOpen(false)}>
+            <Button
+              type="button"
+              variant="ghost"
+              className="flex-1"
+              onClick={() => setIsModalOpen(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" className="flex-1" isLoading={isSubmitting}>

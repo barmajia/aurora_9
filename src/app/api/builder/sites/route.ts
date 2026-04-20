@@ -11,7 +11,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'User ID required' }, { status: 400 });
     }
 
-    let query = supabase.from('site_builds').select('*').eq('user_id', userId);
+    const query = supabase.from('site_builds').select('*').eq('user_id', userId);
 
     if (siteId) {
       const { data: site, error: siteError } = await query.eq('id', siteId).single();
