@@ -1,20 +1,10 @@
-# Aurora Next.js Project Fixes - Analysis Implementation
+# Git Push TODO
 
-## Status: In Progress (2/7 steps complete) - Prisma schema fixed & generated, console.error removed
+## Steps to Complete Git Push
 
-### Plan Steps:
+- [ ] Step 1: Stage all changes - `git add .`
+- [ ] Step 2: Commit changes - `git commit -m "Home page UI modernization: hero/parallax/3D cards + auth/security updates [TODO steps 1-3]"`
+- [ ] Step 3: Push to origin/master - `git push origin master`
+- [ ] Step 4: Verify push success and test `npm run dev`
 
-1. [x] Update prisma/schema.prisma (fixed indexes, password notes)
-2. [ ] Refactor error handling in src/app/products/page.tsx
-3. [ ] Refactor src/app/profile/page.tsx
-4. [ ] Refactor seller/factory product pages (4 files)
-5. [x] Remove console.error from ErrorBoundary.tsx
-6. [ ] Replace admin API mocks with Supabase queries
-7. [x] Delete Header.tsx.backup
-
-### Post-Edit:
-
-- [ ] Prisma db push & generate
-- [ ] npm run lint && npm run build
-
-Track progress here.
+**Progress: Planning complete. Ready for execution.**

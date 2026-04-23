@@ -1,241 +1,409 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import {
   ArrowRight,
+  Star,
+  Zap,
   Shield,
   Truck,
-  Zap,
-  Globe,
-  Sparkles,
-  Heart,
-  Award,
   RefreshCw,
-  
+  Award,
 } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useCartStore } from "@/store/cart";
-import { Button, Card, Magnetic } from "@/components/ui";
-import Image from "next/image";
+import { motion } from "framer-motion";
 
-export default function Home() {
-  const [scrolled, setScrolled] = useState(false);
-  const cartItems = useCartStore((state) => state.items);
-  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+const FEATURES = [
+  {
+    icon: Zap,
+    title: "Lightning Fast",
+    description: "Ultra-fast performance with edge caching",
+  },
+  {
+    icon: Shield,
+    title: "Enterprise Security",
+    description: "Bank-level encryption & protection",
+  },
+  {
+    icon: Truck,
+    title: "Free Shipping",
+    description: "On orders over $100 worldwide",
+  },
+  {
+    icon: RefreshCw,
+    title: "Easy Returns",
+    description: "30-day money-back guarantee",
+  },
+  {
+    icon: Award,
+    title: "Premium Quality",
+    description: "Handpicked premium products",
+  },
+];
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+const CATEGORIES = [
+  { name: "Electronics", icon: "🖥️", color: "from-blue-500 to-cyan-500" },
+  { name: "Fashion", icon: "👗", color: "from-pink-500 to-rose-500" },
+  { name: "Home", icon: "🏠", color: "from-orange-500 to-amber-500" },
+  { name: "Sports", icon: "⚽", color: "from-green-500 to-emerald-500" },
+  { name: "Beauty", icon: "💄", color: "from-purple-500 to-pink-500" },
+  { name: "Books", icon: "📚", color: "from-indigo-500 to-blue-500" },
+];
 
+const TESTIMONIALS = [
+  {
+    name: "Sarah Chen",
+    role: "Verified Buyer",
+    text: "Best shopping experience ever. Fast delivery and amazing product quality!",
+    rating: 5,
+  },
+  {
+    name: "Marcus Johnson",
+    role: "Regular Customer",
+    text: "Aurora never disappoints. Great prices and excellent customer service.",
+    rating: 5,
+  },
+  {
+    name: "Emma Davis",
+    role: "First-time Buyer",
+    text: "Easy checkout process, secure payment, and quick support response!",
+    rating: 5,
+  },
+];
+
+function HeroSection() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* 🚀 Hero Section - Cinematic Minimalism */}
-      <section className="relative pt-48 pb-32 px-6 overflow-hidden">
-        {/* Subtle Background Glows */}
-        <div className="absolute top-20 left-10 w-96 h-96 bg-primary/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-primary/[0.02] rounded-full blur-[150px]" />
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-background">
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse" />
+        <div
+          className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-br from-rose-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "1s" }}
+        />
+      </div>
 
-        <div className="max-w-[1600px] mx-auto relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: "circOut" }}
-            >
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-8"
+          >
+            <div className="space-y-4">
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 text-[10px] font-bold uppercase tracking-[0.2em] mb-12 text-zinc-500"
+                className="inline-flex items-center gap-3 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-full px-4 py-2 backdrop-blur-sm"
               >
-                <Sparkles size={12} className="text-primary animate-pulse" />
-                Next-Gen Retail Infrastructure
+                <span className="animate-pulse">✨</span>
+                <span className="text-sm font-semibold text-indigo-400">
+                  Discover Premium Products
+                </span>
               </motion.div>
-              
-              <h1 className="text-6xl md:text-[8rem] font-bold tracking-tighter mb-10 leading-[0.85] text-foreground">
-                Digital <br />
-                <span className="text-zinc-300 dark:text-zinc-700">Standards.</span>
-              </h1>
-              
-              <p className="text-xl text-zinc-500 dark:text-zinc-400 max-w-xl mb-14 font-medium leading-relaxed">
-                Experience curated collections of exceptional quality. 
-                Aurora unites brands, logistics, and consumers into a single premium ecosystem.
-              </p>
 
-              <div className="flex flex-col sm:flex-row gap-6">
-                <Magnetic strength={0.1}>
-                  <Link href="/products">
-                    <Button size="lg" className="h-16 px-12 rounded-full font-bold uppercase tracking-widest text-[10px] shadow-2xl">
-                      Explore Store <ArrowRight size={16} className="ml-2" />
-                    </Button>
-                  </Link>
-                </Magnetic>
-                <Magnetic strength={0.1}>
-                  <Link href="/about">
-                    <Button variant="outline" size="lg" className="h-16 px-12 rounded-full font-bold uppercase tracking-widest text-[10px]">
-                      Our Story
-                    </Button>
-                  </Link>
-                </Magnetic>
-              </div>
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-tight text-white"
+              >
+                Your
+                <br />
+                <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+                  Premium Shopping
+                </span>
+                <br />
+                Destination
+              </motion.h1>
 
-              <div className="mt-24 flex items-center gap-12">
-                {[
-                  { value: "12K+", label: "Products" },
-                  { value: "48K+", label: "Members" },
-                  { value: "4.9", label: "Rating" },
-                ].map((stat, idx) => (
-                  <div key={idx} className="group">
-                    <div className="text-3xl font-bold tracking-tight text-foreground transition-transform group-hover:-translate-y-1">{stat.value}</div>
-                    <div className="text-[10px] font-bold text-zinc-300 dark:text-zinc-700 uppercase tracking-widest mt-1">
-                      {stat.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="text-xl text-zinc-400 max-w-lg leading-relaxed"
+              >
+                Explore curated collections of premium products from trusted
+                sellers worldwide. Quality, security, and excellence in every
+                purchase.
+              </motion.p>
+            </div>
 
             <motion.div
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 1, ease: "circOut" }}
-              className="relative"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="flex flex-col sm:flex-row gap-4"
             >
-              <div className="relative aspect-square rounded-[4rem] overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-2xl dark:shadow-none bg-zinc-50 dark:bg-zinc-900 group">
-                 <Image 
-                   src="/aurora_hero_mesh_1776510786445.png" 
-                   alt="Aurora Design" 
-                   fill 
-                   className="object-cover opacity-80 group-hover:scale-105 transition-transform duration-[2s]"
-                 />
-                 <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-60" />
-                 
-                 {/* Floating Info Card */}
-                 <div className="absolute bottom-12 left-12 right-12 p-8 bg-white/80 dark:bg-black/80 backdrop-blur-3xl rounded-[2.5rem] border border-white/20 dark:border-zinc-800 shadow-2xl">
-                    <div className="flex justify-between items-center">
-                       <div>
-                          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Active Mesh</p>
-                          <p className="text-2xl font-bold tracking-tight">Global Core</p>
-                       </div>
-                       <div className="w-12 h-12 bg-black dark:bg-white text-white dark:text-black rounded-2xl flex items-center justify-center">
-                          <Globe size={20} className="animate-spin-slow" />
-                       </div>
-                    </div>
-                 </div>
+              <Link
+                href="/products"
+                className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+              >
+                Shop Now
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
+                href="/about"
+                className="inline-flex items-center justify-center px-8 py-4 bg-zinc-800 border border-zinc-700 text-white font-bold rounded-xl hover:bg-zinc-700 transition-all duration-300"
+              >
+                Learn More
+              </Link>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="flex flex-wrap gap-8 pt-4"
+            >
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-green-500" />
+                <span className="text-sm font-medium text-zinc-400">
+                  100% Secure
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Truck className="h-5 w-5 text-blue-500" />
+                <span className="text-sm font-medium text-zinc-400">
+                  Free Shipping
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Award className="h-5 w-5 text-amber-500" />
+                <span className="text-sm font-medium text-zinc-400">
+                  Premium Quality
+                </span>
               </div>
             </motion.div>
-          </div>
-        </div>
-      </section>
+          </motion.div>
 
-      {/* 🏛️ Philosophy Section */}
-      <section className="py-48 px-6 bg-zinc-50 dark:bg-zinc-950/50">
-        <div className="max-w-[1600px] mx-auto text-center mb-32">
-          <span className="text-primary text-[10px] font-bold uppercase tracking-[0.4em] mb-6 block">Our Standards</span>
-          <h2 className="text-5xl md:text-7xl font-bold tracking-tight text-foreground max-w-4xl mx-auto leading-[1.1]">
-            Curating the finest digital <br /> and physical assets.
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="relative h-96 lg:h-full hidden lg:flex items-center justify-center"
+          >
+            <div className="relative w-full h-full max-w-md">
+              <motion.div
+                animate={{ y: [0, -20, 0] }}
+                transition={{ duration: 4, repeat: Infinity }}
+                className="absolute top-0 left-0 w-40 h-56 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl shadow-xl p-4 text-white"
+              >
+                <div className="text-sm font-semibold mb-2">Premium Deal</div>
+                <div className="text-2xl font-black">50% OFF</div>
+                <div className="text-xs mt-4">Selected Items</div>
+              </motion.div>
+
+              <motion.div
+                animate={{ y: [0, 20, 0] }}
+                transition={{ duration: 4, repeat: Infinity }}
+                className="absolute bottom-0 right-0 w-40 h-56 bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl shadow-xl p-4 text-white"
+              >
+                <div className="flex gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className="h-4 w-4 fill-yellow-300 text-yellow-300"
+                    />
+                  ))}
+                </div>
+                <div className="text-sm font-semibold mt-2">4.9/5 Rating</div>
+                <div className="text-xs mt-4">50K+ Reviews</div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CategoriesSection() {
+  return (
+    <section className="py-20 bg-zinc-950">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-4xl sm:text-5xl font-black tracking-tight mb-4 text-white">
+            Shop by Category
           </h2>
-        </div>
+          <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
+            Explore our curated collections across all major categories
+          </p>
+        </motion.div>
 
-        <div className="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          {[
-            { icon: Heart, title: "Curated Selections", desc: "Every item in our ecosystem is vetted through a multi-stage quality protocol." },
-            { icon: Globe, title: "Global Presence", desc: "Operating a high-speed logistics mesh that spans across 48 sectors globally." },
-            { icon: Award, title: "Certified Status", desc: "Industry-leading certification on every product, guaranteed by our ledger." },
-            { icon: Zap, title: "Instant Sync", desc: "Real-time inventory orchestration between factories and consumer hubs." },
-          ].map((feature, idx) => (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {CATEGORIES.map((category, idx) => (
             <motion.div
-              key={idx}
+              key={category.name}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
               className="group"
             >
-              <div className="w-16 h-16 bg-white dark:bg-zinc-900 rounded-3xl flex items-center justify-center mb-10 border border-zinc-100 dark:border-zinc-800 shadow-sm group-hover:bg-primary group-hover:text-background transition-all duration-500">
-                <feature.icon size={28} />
-              </div>
-              <h3 className="text-xl font-bold mb-4 tracking-tight">{feature.title}</h3>
-              <p className="text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">{feature.desc}</p>
+              <Link href={`/products?category=${category.name.toLowerCase()}`}>
+                <div
+                  className={`bg-gradient-to-br ${category.color} p-8 rounded-2xl transition-all duration-300 group-hover:shadow-xl group-hover:scale-105 cursor-pointer`}
+                >
+                  <div className="text-5xl mb-4">{category.icon}</div>
+                  <h3 className="text-white font-bold text-lg">
+                    {category.name}
+                  </h3>
+                </div>
+              </Link>
             </motion.div>
           ))}
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      {/* 🛠️ Ecosystem Grid */}
-      <section className="py-48 px-6 border-y border-zinc-100 dark:border-zinc-800">
-        <div className="max-w-[1600px] mx-auto">
-          <div className="flex flex-col lg:flex-row justify-between items-end mb-24 gap-12">
-             <div className="max-w-2xl">
-                <h2 className="text-5xl md:text-6xl font-bold tracking-tighter text-foreground mb-8">Performance Driven.</h2>
-                <p className="text-xl text-zinc-400 dark:text-zinc-600 font-medium leading-relaxed">
-                  Our infrastructure is optimized for high-throughput commerce, ensuring a seamless experience for every member of the Aurora network.
-                </p>
-             </div>
-             <Link href="/products" className="group flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 hover:text-foreground transition-all">
-                Browse Full Catalog <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-             </Link>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-             {[
-               { icon: Shield, title: "Secure Operations", desc: "Protected by bank-grade encryption across every transactional endpoint." },
-               { icon: Truck, title: "Integrated Mesh", desc: "Direct factory-to-door delivery with optimized routing protocols." },
-               { icon: RefreshCw, title: "Agile Flow", desc: "Instant returns and automated stock rebalancing for merchants." },
-             ].map((item, idx) => (
-               <Card key={idx} className="p-16 rounded-[3rem] hover:border-primary/20 transition-all cursor-default">
-                  <div className="w-14 h-14 bg-zinc-50 dark:bg-zinc-950 rounded-2xl flex items-center justify-center mb-10 text-zinc-300 dark:text-zinc-700">
-                     <item.icon size={32} />
-                  </div>
-                  <h3 className="text-3xl font-bold mb-6 tracking-tight">{item.title}</h3>
-                  <p className="text-lg text-zinc-500 dark:text-zinc-400 leading-relaxed font-medium">{item.desc}</p>
-               </Card>
-             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 💎 Final CTA */}
-      <section className="relative py-60 px-6 text-center overflow-hidden">
-        <div className="absolute inset-0 bg-zinc-50 dark:bg-zinc-950/20" />
-        <div className="max-w-4xl mx-auto relative z-10">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="inline-block p-6 bg-white dark:bg-zinc-900 rounded-[2rem] border border-zinc-100 dark:border-zinc-800 mb-16 shadow-2xl"
-          >
-            <Sparkles size={48} className="text-primary animate-pulse" />
-          </motion.div>
-          <h2 className="text-6xl md:text-[9rem] font-bold tracking-tighter mb-12 leading-[0.8] text-foreground">
-            Join the <br />
-            <span className="text-zinc-200 dark:text-zinc-800">Ecosystem.</span>
+function FeaturesSection() {
+  return (
+    <section className="py-20 bg-zinc-900">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-4xl sm:text-5xl font-black tracking-tight mb-4 text-white">
+            Why Shop at Aurora
           </h2>
-          <p className="text-2xl text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto mb-20 font-medium">
-            Redefine your commerce experience with Aurora. Limited memberships available for optimized performance.
+          <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
+            We're committed to delivering excellence in every aspect of your
+            shopping experience
           </p>
-          
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Magnetic strength={0.1}>
-              <Link href="/signup">
-                <Button size="lg" className="h-20 px-16 rounded-full font-bold uppercase tracking-widest text-xs shadow-2xl">
-                  Get Started
-                </Button>
-              </Link>
-            </Magnetic>
-            <Magnetic strength={0.1}>
-              <Link href="/contact">
-                <Button variant="outline" size="lg" className="h-20 px-16 rounded-full font-bold uppercase tracking-widest text-xs">
-                  Contact Support
-                </Button>
-              </Link>
-            </Magnetic>
-          </div>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          {FEATURES.map((feature, idx) => {
+            const Icon = feature.icon;
+            return (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="bg-zinc-800 border border-zinc-700 p-8 rounded-2xl text-center hover:shadow-lg transition-all duration-300"
+              >
+                <div className="inline-flex p-4 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-xl mb-4">
+                  <Icon className="h-8 w-8 text-indigo-400" />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-sm text-zinc-400">
+                  {feature.description}
+                </p>
+              </motion.div>
+            );
+          })}
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
+
+function TestimonialsSection() {
+  return (
+    <section className="py-20 bg-zinc-950">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-4xl sm:text-5xl font-black tracking-tight mb-4 text-white">
+            Loved by Customers
+          </h2>
+          <p className="text-lg text-zinc-400 max-w-2xl mx-auto">
+            Join thousands of satisfied customers enjoying premium shopping
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {TESTIMONIALS.map((testimonial, idx) => (
+            <motion.div
+              key={testimonial.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1 }}
+              className="bg-zinc-900 border border-zinc-800 p-8 rounded-2xl"
+            >
+              <div className="flex gap-1 mb-4">
+                {[...Array(testimonial.rating)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className="h-5 w-5 fill-yellow-400 text-yellow-400"
+                  />
+                ))}
+              </div>
+              <p className="text-zinc-300 mb-4 italic">
+                &quot;{testimonial.text}&quot;
+              </p>
+              <div className="border-t border-zinc-800 pt-4">
+                <p className="font-bold text-white">{testimonial.name}</p>
+                <p className="text-sm text-zinc-500">{testimonial.role}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function NewsletterSection() {
+  return (
+    <section className="py-20 bg-zinc-900">
+      <div className="max-w-4xl mx-auto px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl p-12 text-center text-white"
+        >
+          <h2 className="text-3xl sm:text-4xl font-black mb-4">
+            Stay Updated with Exclusive Deals
+          </h2>
+          <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
+            Subscribe to our newsletter and get 15% off your first order
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 px-4 py-3 rounded-lg text-zinc-900 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-300"
+            />
+            <button className="px-8 py-3 bg-white text-indigo-600 font-bold rounded-lg hover:bg-zinc-100 transition-colors duration-300">
+              Subscribe
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+export default function Home() {
+  return (
+    <div className="min-h-screen bg-zinc-950">
+      <HeroSection />
+      <CategoriesSection />
+      <FeaturesSection />
+      <TestimonialsSection />
+      <NewsletterSection />
     </div>
   );
 }

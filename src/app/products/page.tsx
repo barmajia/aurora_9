@@ -67,7 +67,7 @@ export default function ProductsPage() {
   }, [products, searchQuery, selectedCategory, sortBy]);
 
   return (
-    <div className="min-h-screen pt-32 pb-20 px-4 md:px-8 max-w-[1600px] mx-auto">
+    <div className="min-h-screen pb-20 px-4 md:px-8 max-w-[1600px] mx-auto">
       {/* 🚀 Page Header */}
       <header className="mb-12 text-center md:text-left flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div>

@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { Product, CartItem } from '@/types';
+import { create } from "zustand";
+import { Product, CartItem } from "@/types";
 
 interface CartStore {
   items: CartItem[];
@@ -20,7 +20,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
           items: state.items.map((item) =>
             item.id === product.id
               ? { ...item, quantity: item.quantity + 1 }
-              : item
+              : item,
           ),
         };
       }
@@ -33,13 +33,13 @@ export const useCartStore = create<CartStore>((set, get) => ({
   updateQuantity: (productId, quantity) =>
     set((state) => ({
       items: state.items.map((item) =>
-        item.id === productId ? { ...item, quantity } : item
+        item.id === productId ? { ...item, quantity } : item,
       ),
     })),
   clearCart: () => set({ items: [] }),
   total: () =>
     get().items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
+      (sum, item) => sum + (item.price || 0) * item.quantity,
+      0,
     ),
 }));

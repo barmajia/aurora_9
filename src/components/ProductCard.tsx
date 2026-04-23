@@ -191,7 +191,23 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
 
       <ProductQuickView
-        product={product}
+        product={
+          product
+            ? {
+                id: product.id,
+                title: product.title || product.name || "Product",
+                description: product.description || "",
+                price: product.price || null,
+                currency: product.currency || "USD",
+                images:
+                  product.images ||
+                  (product.image ? [{ url: product.image }] : []),
+                category: product.category,
+                subcategory: product.subcategory,
+                quantity: product.quantity || 1,
+              }
+            : null
+        }
         isOpen={isQuickViewOpen}
         onClose={() => setIsQuickViewOpen(false)}
       />

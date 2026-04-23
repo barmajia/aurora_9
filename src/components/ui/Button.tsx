@@ -14,14 +14,14 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', isLoading = false, leftIcon, rightIcon, children, disabled, type = 'button', onClick }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center font-medium rounded-full transition-all duration-300 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden relative';
+    const baseStyles = 'inline-flex items-center justify-center font-medium rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden relative';
 
     const variants = {
-      primary: 'bg-black text-white hover:bg-black/90 shadow-sm hover:shadow-lg',
-      secondary: 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200 border border-zinc-200',
-      ghost: 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50',
-      outline: 'border border-zinc-200 text-zinc-900 hover:border-zinc-900 hover:bg-zinc-50',
-      danger: 'bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-100',
+      primary: 'bg-primary text-white hover:bg-primary-hover shadow-sm hover:shadow-lg',
+      secondary: 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200 border border-zinc-200 dark:bg-white/5 dark:text-zinc-100 dark:hover:bg-white/10 dark:border-white/10',
+      ghost: 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/70 dark:text-zinc-300 dark:hover:text-white dark:hover:bg-white/10',
+      outline: 'border border-zinc-200 text-zinc-900 hover:border-zinc-300 hover:bg-zinc-50 dark:border-white/10 dark:text-white dark:hover:border-white/20 dark:hover:bg-white/10',
+      danger: 'bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-100 dark:bg-rose-500/10 dark:text-rose-300 dark:hover:bg-rose-500/15 dark:border-rose-500/20',
     };
 
     const sizes = { 

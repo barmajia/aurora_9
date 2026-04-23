@@ -26,32 +26,38 @@ export default function AdminDashboard() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const fetchItems = async () => {
+    if (!isAuthenticated) return;
+
+    setIsLoading(true);
+    try {
+      const endpoints: Record<Tab, string> = {
+        products: "/api/admin/products",
+        sellers: "/api/admin/sellers",
+        factories: "/api/admin/factories",
+        middlemen: "/api/admin/middlemen",
+      };
+      const res = await fetch(endpoints[activeTab]);
+      if (res.ok) {
+        const data = await res.json();
+        setItems(data);
+      } else {
+        setItems([]);
+      }
+    } catch {
+      setItems([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    const fetchItems = async () => {
-      setIsLoading(true);
-      try {
-        const endpoints: Record<Tab, string> = {
-          products: "/api/admin/products",
-          sellers: "/api/admin/sellers",
-          factories: "/api/admin/factories",
-          middlemen: "/api/admin/middlemen",
-        };
-        const res = await fetch(endpoints[activeTab]);
-        if (res.ok) {
-          const data = await res.json();
-          setItems(data);
-        } else {
-          setItems([]);
-        }
-      } catch {
-        setItems([]);
-      }
-      setIsLoading(false);
-    };
-
     fetchItems();
+
+    const interval = setInterval(fetchItems, 30000);
+    return () => clearInterval(interval);
   }, [isAuthenticated, activeTab]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -307,110 +313,142 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title={editingItem ? "Edit" : "Add New"}
-      >
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {activeTab === "products" && (
-            <>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <div className="space-y-6">
+          <h2 className="text-xl font-bold">
+            {editingItem ? "Edit" : "Add New"}
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {activeTab === "products" && (
+              <>
+                <Input
+                  label="Title"
+                  value={String(editingItem?.title || "")}
+                  onChange={(e) =>
+                    setEditingItem((prev) =>
+                      prev
+                        ? { ...prev, title: e.target.value }
+                        : { title: e.target.value },
+                    )
+                  }
+                  required
+                />
+                <Input
+                  label="Price"
+                  type="number"
+                  value={String(editingItem?.price || "")}
+                  onChange={(e) =>
+                    setEditingItem((prev) =>
+                      prev
+                        ? { ...prev, price: parseFloat(e.target.value) }
+                        : { price: parseFloat(e.target.value) },
+                    )
+                  }
+                  required
+                />
+                <Input
+                  label="Stock"
+                  type="number"
+                  value={String(editingItem?.stock || "")}
+                  onChange={(e) =>
+                    setEditingItem((prev) =>
+                      prev
+                        ? { ...prev, stock: parseInt(e.target.value) }
+                        : { stock: parseInt(e.target.value) },
+                    )
+                  }
+                  required
+                />
+              </>
+            )}
+            {activeTab === "sellers" && (
               <Input
-                label="Title"
-                value={String(editingItem?.title || "")}
+                label="Store Name"
+                value={String(editingItem?.storeName || "")}
                 onChange={(e) =>
                   setEditingItem((prev) =>
                     prev
-                      ? { ...prev, title: e.target.value }
-                      : { title: e.target.value },
+                      ? { ...prev, storeName: e.target.value }
+                      : { storeName: e.target.value },
                   )
                 }
                 required
               />
-              <Input
-                label="Price"
-                type="number"
-                value={String(editingItem?.price || "")}
-                onChange={(e) =>
-                  setEditingItem((prev) =>
-                    prev
-                      ? { ...prev, price: parseFloat(e.target.value) }
-                      : { price: parseFloat(e.target.value) },
-                  )
-                }
-                required
-              />
-              <Input
-                label="Stock"
-                type="number"
-                value={String(editingItem?.stock || "")}
-                onChange={(e) =>
-                  setEditingItem((prev) =>
-                    prev
-                      ? { ...prev, stock: parseInt(e.target.value) }
-                      : { stock: parseInt(e.target.value) },
-                  )
-                }
-                required
-              />
-            </>
-          )}
-          {activeTab === "sellers" && (
-            <Input
-              label="Store Name"
-              value={String(editingItem?.storeName || "")}
-              onChange={(e) =>
-                setEditingItem((prev) =>
-                  prev
-                    ? { ...prev, storeName: e.target.value }
-                    : { storeName: e.target.value },
-                )
-              }
-              required
-            />
-          )}
-          {activeTab === "factories" && (
-            <Input
-              label="Factory Name"
-              value={String(editingItem?.factoryName || "")}
-              onChange={(e) =>
-                setEditingItem((prev) =>
-                  prev
-                    ? { ...prev, factoryName: e.target.value }
-                    : { factoryName: e.target.value },
-                )
-              }
-              required
-            />
-          )}
-          {activeTab === "middlemen" && (
-            <Input
-              label="Name"
-              value={String(editingItem?.name || "")}
-              onChange={(e) =>
-                setEditingItem((prev) =>
-                  prev
-                    ? { ...prev, name: e.target.value }
-                    : { name: e.target.value },
-                )
-              }
-              required
-            />
-          )}
-          <div className="flex gap-4 pt-4">
-            <Button
-              type="button"
-              variant="ghost"
-              className="flex-1"
-              onClick={() => setIsModalOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" className="flex-1" isLoading={isSubmitting}>
-              Save
-            </Button>
-          </div>
-        </form>
+            )}
+            {activeTab === "factories" && (
+              <>
+                <Input
+                  label="Factory Name"
+                  value={String(editingItem?.factoryName || "")}
+                  onChange={(e) =>
+                    setEditingItem((prev) =>
+                      prev
+                        ? { ...prev, factoryName: e.target.value }
+                        : { factoryName: e.target.value },
+                    )
+                  }
+                  required
+                />
+                <Input
+                  label="Location"
+                  value={String(editingItem?.location || "")}
+                  onChange={(e) =>
+                    setEditingItem((prev) =>
+                      prev
+                        ? { ...prev, location: e.target.value }
+                        : { location: e.target.value },
+                    )
+                  }
+                  required
+                />
+              </>
+            )}
+            {activeTab === "middlemen" && (
+              <>
+                <Input
+                  label="Middleman Name"
+                  value={String(editingItem?.middlemanName || "")}
+                  onChange={(e) =>
+                    setEditingItem((prev) =>
+                      prev
+                        ? { ...prev, middlemanName: e.target.value }
+                        : { middlemanName: e.target.value },
+                    )
+                  }
+                  required
+                />
+                <Input
+                  label="Commission Rate (%)"
+                  type="number"
+                  value={String(editingItem?.commissionRate || "")}
+                  onChange={(e) =>
+                    setEditingItem((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            commissionRate: parseFloat(e.target.value),
+                          }
+                        : { commissionRate: parseFloat(e.target.value) },
+                    )
+                  }
+                  required
+                />
+              </>
+            )}
+            <div className="mt-6 flex justify-end">
+              <Button
+                onClick={handleSubmit}
+                isLoading={isSubmitting}
+                variant="primary"
+              >
+                {editingItem ? "Save Changes" : "Add Item"}
+              </Button>
+              <Button onClick={() => setIsModalOpen(false)} variant="secondary">
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </div>
       </Modal>
     </div>
   );

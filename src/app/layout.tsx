@@ -70,8 +70,9 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable}`}
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
     >
-      <body>
+      <body className="bg-white dark:bg-black text-black dark:text-white transition-colors duration-300">
         <a href="#main-content" className="skip-link">
           Skip to main content
         </a>
@@ -79,7 +80,9 @@ export default function RootLayout({
           <Providers>
             <CartProvider>
               <Header />
-              <main id="main-content">{children}</main>
+              <main id="main-content" className="app-shell max-w mx-auto">
+                {children}
+              </main>
               <Footer />
               <ToastContainer />
               <CookieConsent />

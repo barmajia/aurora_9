@@ -6,17 +6,53 @@ import { cn } from "@/lib/utils";
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   hover?: boolean;
   glass?: boolean;
+  variant?: "default" | "elevated" | "outline" | "gradient" | "gloss";
+  size?: "sm" | "md" | "lg";
+  interactive?: boolean;
 }
 
 const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ className, hover = true, glass = true, children, ...props }, ref) => {
+  (
+    {
+      className,
+      hover = true,
+      glass = true,
+      variant = "default",
+      size = "md",
+      interactive = false,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    const variantStyles = {
+      default: "aurora-card",
+      elevated:
+        "bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-lg hover:shadow-2xl",
+      outline:
+        "border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 rounded-2xl",
+      gradient:
+        "bg-gradient-to-br from-white to-zinc-50 dark:from-zinc-900 dark:to-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-lg",
+      gloss:
+        "bg-white/80 dark:bg-zinc-900/80 backdrop-blur-lg border border-white/20 dark:border-zinc-700/20 rounded-2xl shadow-xl",
+    };
+
+    const sizeStyles = {
+      sm: "p-4",
+      md: "p-6",
+      lg: "p-8",
+    };
+
     return (
       <div
         ref={ref}
         className={cn(
-          "p-6 transition-all duration-500",
-          glass ? "aurora-card" : "bg-card-bg rounded-[2.5rem]",
-          !hover && "hover:transform-none hover:shadow-none translate-y-0",
+          "transition-all duration-300 ease-out",
+          variantStyles[variant],
+          sizeStyles[size],
+          hover && "hover:-translate-y-1 hover:shadow-xl",
+          interactive && "cursor-pointer active:scale-95",
+          !hover && "hover:transform-none hover:shadow-none",
           className,
         )}
         {...props}
@@ -33,7 +69,7 @@ const CardHeader = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, children, ...props }, ref) => (
-  <div ref={ref} className={cn("mb-4", className)} {...props}>
+  <div ref={ref} className={cn("mb-6", className)} {...props}>
     {children}
   </div>
 ));
@@ -44,7 +80,10 @@ const CardTitle = forwardRef<
 >(({ className, children, ...props }, ref) => (
   <h3
     ref={ref}
-    className={cn("text-lg font-bold text-zinc-900", className)}
+    className={cn(
+      "text-2xl font-bold text-foreground dark:text-white",
+      className,
+    )}
     {...props}
   >
     {children}
@@ -55,7 +94,7 @@ const CardContent = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, children, ...props }, ref) => (
-  <div ref={ref} className={cn("", className)} {...props}>
+  <div ref={ref} className={cn("space-y-4", className)} {...props}>
     {children}
   </div>
 ));
@@ -64,7 +103,11 @@ const CardDescription = forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => (
-  <p ref={ref} className={cn("text-sm text-zinc-500", className)} {...props}>
+  <p
+    ref={ref}
+    className={cn("text-sm text-zinc-600 dark:text-white-400", className)}
+    {...props}
+  >
     {children}
   </p>
 ));
@@ -75,7 +118,10 @@ const CardFooter = forwardRef<
 >(({ className, children, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("mt-4 pt-4 border-t border-zinc-100", className)}
+    className={cn(
+      "mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800",
+      className,
+    )}
     {...props}
   >
     {children}

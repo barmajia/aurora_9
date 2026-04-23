@@ -152,7 +152,7 @@ export default function CheckoutPage() {
   if (!user || items.length === 0) return null;
 
   return (
-    <div className="min-h-screen pt-32 pb-24 px-6 md:px-12 max-w-[1400px] mx-auto bg-[#020203]">
+    <div className="min-h-screen pb-24 px-6 md:px-12 max-w-[1400px] mx-auto bg-[#020203]">
       <header className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div>
            <Link href="/cart" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-white/20 hover:text-white transition-colors mb-6">
