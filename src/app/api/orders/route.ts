@@ -165,8 +165,8 @@ export async function GET(request: NextRequest) {
           );
         }
 
-        const filteredOrders = ((orders as any[]) || []).filter(
-          (o: any) => o.id === orderId,
+        const filteredOrders = ((orders as unknown as { id: string }[]) || []).filter(
+          (o) => o.id === orderId,
         );
         return NextResponse.json({ orders: filteredOrders || [] });
       }
