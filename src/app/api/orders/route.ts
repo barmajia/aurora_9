@@ -166,7 +166,7 @@ export async function GET(request: NextRequest) {
         }
 
         const filteredOrders = (orders || []).filter(
-          (o: any) => o.id === orderId,
+          (o: { id: string }) => o.id === orderId,
         );
         return NextResponse.json({ orders: filteredOrders || [] });
       }
@@ -226,7 +226,7 @@ export async function POST(request: NextRequest) {
     // ====================================================================
     // PREPARE UPDATE DATA
     // ====================================================================
-    const updates: Record<string, any> = {
+    const updates: Record<string, unknown> = {
       updated_at: new Date().toISOString(),
     };
 

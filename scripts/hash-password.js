@@ -9,6 +9,7 @@
  * Use the output as ADMIN_PASSWORD_HASH in .env.local
  */
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const crypto = require("crypto");
 
 function hashPassword(password) {

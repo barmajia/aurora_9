@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   X,
   Heart,
@@ -11,7 +11,6 @@ import {
   Shield,
   RotateCcw,
   Star,
-  Share2,
   Zap,
   Box,
   CheckCircle2,
@@ -23,7 +22,6 @@ import { useCartStore } from "@/store/cart";
 import { useWishlistStore } from "@/store/wishlist";
 import { useToastStore } from "@/store/toast";
 import { useAuthStore } from "@/store/auth";
-import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 
 interface ProductImage {
@@ -294,7 +292,7 @@ export default function ProductQuickView({
                     {["overview", "shipping", "reviews"].map((tab) => (
                       <button
                         key={tab}
-                        onClick={() => setActiveTab(tab as any)}
+                        onClick={() => setActiveTab(tab as "overview" | "shipping" | "reviews")}
                         className={cn(
                           "pb-4 text-[10px] font-black uppercase tracking-widest transition-all relative",
                           activeTab === tab

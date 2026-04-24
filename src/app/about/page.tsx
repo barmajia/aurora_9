@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Sparkles, Users, Award, TrendingUp, Globe, Heart, Shield, Cpu, Zap } from "lucide-react";
+import { Award, Globe, Shield, Cpu, Zap } from "lucide-react";
 import { Button } from "@/components/ui";
 
 export default function AboutPage() {

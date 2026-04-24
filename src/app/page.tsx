@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Zap, Shield, Truck, RefreshCw, Award } from "lucide-react";
 import { Button } from "@/components/ui";
 import { HeroSection, CategoriesSection, FeaturesSection } from "@/components/home/HomeClient";
 import FeaturedProducts from "@/components/FeaturedProducts";

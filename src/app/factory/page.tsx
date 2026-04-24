@@ -89,14 +89,14 @@ function AnimatedCounter({
 
 // Floating Particles Component
 function FloatingParticles() {
-  const particles = Array.from({ length: 25 }, (_, i) => ({
+  const particles = useState(() => Array.from({ length: 25 }, (_, i) => ({
     id: i,
     size: Math.random() * 4 + 2,
     x: Math.random() * 100,
     y: Math.random() * 100,
     duration: Math.random() * 20 + 10,
     delay: Math.random() * 5,
-  }));
+  })))[0];
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -293,7 +293,7 @@ export default function FactoryPage() {
               transition={{ delay: 0.3 }}
               className="text-lg md:text-2xl text-white/70 max-w-3xl mx-auto leading-relaxed"
             >
-              Join Aurora's manufacturing network. Manage production, connect
+              Join Aurora&apos;s manufacturing network. Manage production, connect
               with global buyers, and scale your operations with
               enterprise-grade tools.
             </motion.p>

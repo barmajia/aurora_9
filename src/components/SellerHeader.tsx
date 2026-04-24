@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function SellerHeader() {
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -132,7 +132,7 @@ export default function SellerHeader() {
             <div className="flex items-center gap-3">
               <div className="flex flex-col items-end hidden lg:flex">
                 <span className="text-[10px] font-black uppercase tracking-widest text-white">
-                  {(user as any)?.user_metadata?.full_name ||
+                  {(user?.user_metadata as { full_name?: string })?.full_name ||
                     user?.email?.split("@")[0] ||
                     "Seller Admin"}
                 </span>
