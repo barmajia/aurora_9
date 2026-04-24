@@ -432,9 +432,16 @@ export function validateNumericId(id: string | number): boolean {
 export function obfuscateId(id: string): string {
   if (!id) return "";
   try {
-    const b64 = Buffer.from(id).toString("base64");
-    // Use crypto.randomBytes for cryptographically secure suffix (not Math.random)
-    const suffix = crypto.randomBytes(4).toString("hex");
+    const b64 = typeof Buffer !== "undefined" 
+      ? Buffer.from(id).toString("base64")
+      : btoa(id);
+    // Use a deterministic hash for the suffix to avoid React hydration mismatches
+    let hash = 0;
+    for (let i = 0; i < id.length; i++) {
+      hash = ((hash << 5) - hash) + id.charCodeAt(i);
+      hash |= 0;
+    }
+    const suffix = Math.abs(hash).toString(16).padStart(8, '0');
     return `node_${b64.replace(/=/g, "")}_${suffix}`;
   } catch (e) {
     return id;

@@ -15,7 +15,7 @@ import {
   Info
 } from "lucide-react";
 import { Button, Magnetic } from "@/components/ui";
-import { deobfuscateId } from "@/lib/security";
+import { deobfuscateId } from "@/lib/id-utils";
 
 async function getProductById(id: string): Promise<Product | null> {
   try {

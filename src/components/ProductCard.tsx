@@ -10,7 +10,7 @@ import { useToastStore } from "@/store/toast";
 import ProductQuickView from "./ProductQuickView";
 import { Product } from "@/types";
 import { cn } from "@/lib/utils";
-import { obfuscateId } from "@/lib/security";
+import { obfuscateId } from "@/lib/id-utils";
 
 const StarRating = ({
   rating,

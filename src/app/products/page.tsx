@@ -109,7 +109,7 @@ export default function ProductsPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="mt-8 text-zinc-500 dark:text-zinc-400 font-medium text-lg leading-relaxed"
+                className="mt-8 text-black dark:text-zinc-400 font-medium text-lg leading-relaxed"
               >
                 Explore the foundational components of the Aurora Ecosystem.
                 Curated for performance, aesthetics, and reliability.
