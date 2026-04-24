@@ -27,7 +27,6 @@ const securityHeaders = [
   },
   {
     key: "Permissions-Policy",
-
     value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
   },
   {
@@ -38,8 +37,9 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https: blob:",
       "font-src 'self' data:",
-      "connect-src 'self' https://*.supabase.co",
-      "frame-ancestors 'self'",
+      "connect-src 'self' https://*.supabase.co https://vercel.live",
+      "frame-src 'self' https://vercel.live",
+      "frame-ancestors 'self' https://vercel.live",
     ].join("; "),
   },
 ];
