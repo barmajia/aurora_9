@@ -108,7 +108,7 @@ export default function SellerHeader() {
               <input
                 type="text"
                 placeholder="Search orders..."
-                className="w-56 pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-[1.5rem] text-[10px] font-bold uppercase tracking-widest outline-none focus:w-72 focus:bg-white/10 transition-all placeholder:text-white/20"
+                className="w-56 pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-1.5rem text-[10px] font-bold uppercase tracking-widest outline-none focus:w-72 focus:bg-white/10 transition-all placeholder:text-white/20"
               />
               <Search
                 className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-emerald-500 transition-colors"

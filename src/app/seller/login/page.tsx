@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/auth";
 import { useToastStore } from "@/store/toast";
+import { Router } from "next/router";
 
 // Background gradient elements
 function BackgroundGradients({ theme }: { theme: "light" | "dark" }) {
@@ -45,14 +46,24 @@ interface TopNavProps {
 }
 
 function TopNav({ theme, onThemeToggle }: TopNavProps) {
+  const router = useRouter();
   const bgClass =
     theme === "light"
       ? "bg-black/5 border-black/10 text-slate-700 hover:bg-black/10"
       : "bg-white/5 border-white/10 text-white/80 hover:bg-white/10";
 
+  const handleBack = () => {
+    if (window.history.length > 2) {
+      router.back();
+    } else {
+      router.push("/seller");
+    }
+  };
+
   return (
     <div className="absolute top-6 left-6 right-6 flex items-center justify-between z-20">
       <button
+        onClick={handleBack}
         className={`flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md border transition-all text-sm font-medium ${bgClass}`}
       >
         <ArrowLeft className="h-4 w-4" />
@@ -98,12 +109,12 @@ function HeaderSection({ theme }: { theme: "light" | "dark" }) {
         Seller Portal
       </h2>
       <p className={`mt-3 font-medium ${subtextClass}`}>
-        Not a seller?{" "}
+        Need the seller app?{" "}
         <Link
           href="/seller/signup"
           className={`hover:underline transition-all underline-offset-4 ${linkClass}`}
         >
-          Create account
+          Download here
         </Link>
       </p>
     </div>

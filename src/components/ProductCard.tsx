@@ -12,7 +12,13 @@ import { Product } from "@/types";
 import { cn } from "@/lib/utils";
 import { obfuscateId } from "@/lib/security";
 
-const StarRating = ({ rating, reviews }: { rating: number, reviews: number }) => {
+const StarRating = ({
+  rating,
+  reviews,
+}: {
+  rating: number;
+  reviews: number;
+}) => {
   return (
     <div className="flex items-center gap-1.5">
       <div className="flex items-center gap-0.5">
@@ -22,7 +28,9 @@ const StarRating = ({ rating, reviews }: { rating: number, reviews: number }) =>
             size={10}
             className={cn(
               "fill-current",
-              i < Math.floor(rating) ? "text-blue-500" : "text-zinc-300 dark:text-zinc-800"
+              i < Math.floor(rating)
+                ? "text-blue-500"
+                : "text-zinc-300 dark:text-zinc-800",
             )}
           />
         ))}
@@ -46,7 +54,8 @@ export default function ProductCard({ product }: { product: Product }) {
   const inWishlist = isInWishlist(product.id);
 
   const productName = product.name || product.title || "Product";
-  const productImage = product.image || product.images?.[0]?.url || "/images/placeholder.jpg";
+  const productImage =
+    product.image || product.images?.[0]?.url || "/images/placeholder.jpg";
   const productPrice = product.price || 0;
   const productDescription = product.description || "";
   const productCategory = product.category || "";
@@ -86,10 +95,8 @@ export default function ProductCard({ product }: { product: Product }) {
 
   return (
     <>
-      <div 
-        className="aurora-card group flex flex-col h-full cursor-pointer overflow-hidden p-2.5 relative"
-      >
-        <div className="relative aspect-square rounded-[1.25rem] overflow-hidden bg-zinc-100 dark:bg-zinc-900 mb-4 z-[2]">
+      <div className="aurora-card group flex flex-col h-full cursor-pointer overflow-hidden p-2.5 relative">
+        <div className="relative aspect-square rounded-[1.25rem] overflow-hidden bg-zinc-100 dark:bg-zinc-900 mb-4 z-2">
           {productBadge && (
             <div className="absolute top-3 left-3 z-10 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md px-2 py-1 rounded-full shadow-sm">
               <span className="text-[8px] font-black uppercase tracking-widest text-zinc-900 dark:text-white">
@@ -102,9 +109,9 @@ export default function ProductCard({ product }: { product: Product }) {
             onClick={handleWishlist}
             className={cn(
               "absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm",
-              inWishlist 
-                ? "bg-rose-500 text-white" 
-                : "bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md text-zinc-400 hover:text-rose-500"
+              inWishlist
+                ? "bg-rose-500 text-white"
+                : "bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md text-zinc-400 hover:text-rose-500",
             )}
           >
             <Heart size={14} fill={inWishlist ? "currentColor" : "none"} />
@@ -130,7 +137,11 @@ export default function ProductCard({ product }: { product: Product }) {
             </button>
             <button
               className="w-10 h-10 bg-white/90 dark:bg-zinc-800/90 backdrop-blur-md text-zinc-900 dark:text-white rounded-xl flex items-center justify-center shadow-xl hover:scale-[1.02] transition-all"
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsQuickViewOpen(true); }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsQuickViewOpen(true);
+              }}
             >
               <Eye size={14} />
             </button>
@@ -151,18 +162,28 @@ export default function ProductCard({ product }: { product: Product }) {
 
           <div className="mt-auto flex items-end justify-between gap-2">
             <div className="flex flex-col">
-              <span className="text-[7px] font-black uppercase tracking-widest text-zinc-400 leading-none mb-0.5">Price Unit</span>
+              <span className="text-[7px] font-black uppercase tracking-widest text-zinc-400 leading-none mb-0.5">
+                Price Unit
+              </span>
               <p className="text-lg font-black italic tracking-tighter text-zinc-900 dark:text-white leading-none">
-                ${productPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                $
+                {productPrice.toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                })}
               </p>
             </div>
             <div className="h-8 px-2.5 rounded-lg border border-zinc-100 dark:border-zinc-800 flex items-center gap-1.5">
               <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400">Sync</span>
+              <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+                Sync
+              </span>
             </div>
           </div>
         </div>
-        <Link href={`/products/${obfuscateId(product.id)}`} className="absolute inset-0 z-[5]"></Link>
+        <Link
+          href={`/products/${obfuscateId(product.id)}`}
+          className="absolute inset-0 z-[5]"
+        ></Link>
       </div>
 
       <ProductQuickView
@@ -174,7 +195,9 @@ export default function ProductCard({ product }: { product: Product }) {
                 description: product.description || "",
                 price: product.price || null,
                 currency: product.currency || "USD",
-                images: product.images || (product.image ? [{ url: product.image }] : []),
+                images:
+                  product.images ||
+                  (product.image ? [{ url: product.image }] : []),
                 category: product.category,
                 subcategory: product.subcategory,
                 quantity: product.quantity || 1,

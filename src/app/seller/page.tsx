@@ -220,56 +220,25 @@ export default function SellerPage() {
 
   return (
     <div className="min-h-screen bg-background overflow-hidden">
-      {/* Seller Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Store className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
-            <span className="font-bold text-lg text-slate-900 dark:text-white">
-              Aurora Seller Hub
-            </span>
-          </div>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link
-              href="/seller/features"
-              className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
-            >
-              Features
-            </Link>
-            <Link
-              href="/seller/pricing"
-              className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/seller/login"
-              className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
-            >
-              Login
-            </Link>
-          </nav>
-        </div>
-      </header>
+
 
       {/* Scroll to top button */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className={`fixed bottom-8 right-8 z-50 p-3 rounded-full bg-emerald-600 text-white shadow-lg shadow-emerald-500/30 transition-all duration-300 hover:scale-110 hover:bg-emerald-700 ${
-          isScrolled
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-10 pointer-events-none"
-        }`}
+        className={`fixed bottom-8 right-8 z-50 p-3 rounded-full bg-emerald-600 text-white shadow-lg shadow-emerald-500/30 transition-all duration-300 hover:scale-110 hover:bg-emerald-700 ${isScrolled
+          ? "opacity-100 translate-y-0"
+          : "opacity-0 translate-y-10 pointer-events-none"
+          }`}
         aria-label="Scroll to top"
       >
         <ArrowUp className="h-5 w-5" />
       </button>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 pt-16">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-emerald-50 to-slate-100 dark:from-slate-900 dark:via-emerald-950 dark:to-slate-900 pt-16">
         {/* Animated Background */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)]" />
           <FloatingParticles />
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl animate-pulse" />
           <div
@@ -285,7 +254,7 @@ export default function SellerPage() {
         {/* Hero Content */}
         <div className="relative z-10 container mx-auto px-4 py-20">
           <div className="max-w-5xl mx-auto text-center space-y-8 animate-fade-in">
-            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-emerald-500/10 backdrop-blur-md border border-emerald-500/20 text-emerald-300 text-sm font-medium mx-auto transition-all duration-300 hover:bg-emerald-500/20 hover:scale-105 cursor-pointer">
+            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-emerald-500/10 backdrop-blur-md border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-sm font-medium mx-auto transition-all duration-300 hover:bg-emerald-500/20 hover:scale-105 cursor-pointer">
               <Sparkles className="h-4 w-4 animate-spin-slow" />
               <span>
                 {t("sellerWelcome.hero.badge", "Become a Seller on Aurora")}
@@ -294,12 +263,12 @@ export default function SellerPage() {
             </div>
 
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">
-              <span className="bg-gradient-to-r from-emerald-300 via-white to-teal-300 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-emerald-600 via-teal-700 to-emerald-600 dark:from-emerald-300 dark:via-white dark:to-teal-300 bg-clip-text text-transparent">
                 {t("sellerWelcome.hero.title", "Sell to the World")}
               </span>
             </h1>
 
-            <p className="text-lg md:text-2xl text-white/70 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-2xl text-slate-700 dark:text-white/70 max-w-3xl mx-auto leading-relaxed">
               {t(
                 "sellerWelcome.hero.subtitle",
                 "Join thousands of successful sellers growing their business on Aurora. Reach global customers, manage your store, and scale with powerful tools.",
@@ -318,14 +287,14 @@ export default function SellerPage() {
               <button
                 type="button"
                 onClick={() => router.push("/seller/login")}
-                className="border-2 border-emerald-500/30 bg-emerald-500/10 backdrop-blur-md text-emerald-200 hover:bg-emerald-500/20 text-lg px-10 py-7 rounded-xl transition-all duration-300 hover:scale-105 flex items-center gap-2"
+                className="border-2 border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-500/10 backdrop-blur-md text-emerald-700 dark:text-emerald-200 hover:bg-emerald-500/10 dark:hover:bg-emerald-500/20 text-lg px-10 py-7 rounded-xl transition-all duration-300 hover:scale-105 flex items-center gap-2"
               >
                 <Play className="h-5 w-5" />
                 {t("sellerWelcome.hero.loginCta", "Login as Seller")}
               </button>
             </div>
 
-            <div className="flex flex-wrap justify-center gap-8 pt-8 text-white/60 text-sm">
+            <div className="flex flex-wrap justify-center gap-8 pt-8 text-slate-600 dark:text-white/60 text-sm">
               <div className="flex items-center gap-2">
                 <Zap className="h-4 w-4" />
                 <span>
@@ -427,7 +396,7 @@ export default function SellerPage() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-24 bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 text-white relative overflow-hidden">
+      <section className="py-24 bg-gradient-to-br from-slate-100 via-emerald-50 to-slate-100 dark:from-slate-900 dark:via-emerald-950 dark:to-slate-900 text-slate-900 dark:text-white relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl" />
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-500/15 rounded-full blur-3xl" />
@@ -435,7 +404,7 @@ export default function SellerPage() {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-sm font-medium mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/5 dark:bg-white/10 backdrop-blur-md border border-slate-900/10 dark:border-white/20 text-slate-900 dark:text-white/90 text-sm font-medium mb-4">
               <TrendingUp className="h-4 w-4" />
               <span>{t("sellerWelcome.steps.title", "How It Works")}</span>
             </div>
@@ -445,7 +414,7 @@ export default function SellerPage() {
                 "Start Selling in 3 Easy Steps",
               )}
             </h2>
-            <p className="text-lg text-white/60">
+            <p className="text-lg text-slate-600 dark:text-white/60">
               {t(
                 "sellerWelcome.steps.subheading",
                 "Getting started is simple. Be up and running in minutes.",
@@ -460,12 +429,12 @@ export default function SellerPage() {
                   {step.number}
                 </div>
 
-                <div className="relative p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-emerald-500/30 transition-all duration-500 hover:-translate-y-2 h-full">
-                  <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 mb-6 transition-all duration-300 group-hover:scale-110 group-hover:bg-emerald-500/30">
+                <div className="relative p-8 rounded-2xl bg-white/50 dark:bg-white/5 backdrop-blur-sm border border-slate-200 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white/10 hover:border-emerald-500/30 transition-all duration-500 hover:-translate-y-2 h-full shadow-xl shadow-slate-200/50 dark:shadow-none">
+                  <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-6 transition-all duration-300 group-hover:scale-110 group-hover:bg-emerald-500/20 dark:group-hover:bg-emerald-500/30">
                     {step.icon}
                   </div>
-                  <h3 className="font-semibold text-xl mb-3">{step.title}</h3>
-                  <p className="text-white/60 leading-relaxed">
+                  <h3 className="font-semibold text-xl mb-3 text-slate-900 dark:text-white">{step.title}</h3>
+                  <p className="text-slate-600 dark:text-white/60 leading-relaxed">
                     {step.description}
                   </p>
                 </div>
@@ -544,11 +513,10 @@ export default function SellerPage() {
                       key={index}
                       type="button"
                       onClick={() => setActiveTestimonial(index)}
-                      className={`h-2 rounded-full transition-all duration-300 ${
-                        index === activeTestimonial
-                          ? "w-8 bg-white"
-                          : "w-2 bg-white/40 hover:bg-white/60"
-                      }`}
+                      className={`h-2 rounded-full transition-all duration-300 ${index === activeTestimonial
+                        ? "w-8 bg-white"
+                        : "w-2 bg-white/40 hover:bg-white/60"
+                        }`}
                       aria-label={`View testimonial ${index + 1}`}
                     />
                   ))}
@@ -625,16 +593,16 @@ export default function SellerPage() {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-24 bg-gradient-to-br from-emerald-600 via-teal-600 to-emerald-700 text-white relative overflow-hidden">
+      <section className="py-24 bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100 dark:from-emerald-600 dark:via-teal-600 dark:to-emerald-700 text-slate-900 dark:text-white relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-50" />
-          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(rgba(0,0,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.05)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:3rem_3rem] opacity-50" />
+          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-emerald-500/10 dark:bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-teal-500/10 dark:bg-white/10 rounded-full blur-3xl" />
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-emerald-500/10 dark:bg-white/10 backdrop-blur-md border border-emerald-500/20 dark:border-white/20 text-emerald-800 dark:text-white/90 text-sm font-medium mb-6">
               <Zap className="h-4 w-4" />
               <span>
                 {t("sellerWelcome.cta.badge", "Ready to Get Started?")}
@@ -643,7 +611,7 @@ export default function SellerPage() {
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               {t("sellerWelcome.cta.title", "Start Your Selling Journey Today")}
             </h2>
-            <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
+            <p className="text-xl text-slate-700 dark:text-white/80 mb-10 max-w-2xl mx-auto">
               {t(
                 "sellerWelcome.cta.subtitle",
                 "Join thousands of sellers already growing their business on Aurora. Create your free account in minutes.",
@@ -653,7 +621,7 @@ export default function SellerPage() {
               <button
                 type="button"
                 onClick={() => router.push("/seller/signup")}
-                className="bg-white text-emerald-700 hover:bg-white/90 text-lg px-10 py-7 rounded-xl shadow-2xl shadow-black/20 transition-all duration-300 hover:scale-105 font-semibold flex items-center gap-2"
+                className="bg-emerald-600 dark:bg-white text-white dark:text-emerald-700 hover:bg-emerald-700 dark:hover:bg-white/90 text-lg px-10 py-7 rounded-xl shadow-2xl shadow-emerald-500/20 dark:shadow-black/20 transition-all duration-300 hover:scale-105 font-semibold flex items-center gap-2"
               >
                 {t("sellerWelcome.cta.signupCta", "Create Seller Account")}
                 <ArrowRight className="h-5 w-5" />
@@ -661,13 +629,13 @@ export default function SellerPage() {
               <button
                 type="button"
                 onClick={() => router.push("/seller/login")}
-                className="border-2 border-white/40 bg-white/10 backdrop-blur-md text-white hover:bg-white/20 text-lg px-10 py-7 rounded-xl transition-all duration-300 hover:scale-105"
+                className="border-2 border-emerald-500/20 dark:border-white/40 bg-emerald-500/5 dark:bg-white/10 backdrop-blur-md text-emerald-700 dark:text-white hover:bg-emerald-500/10 dark:hover:bg-white/20 text-lg px-10 py-7 rounded-xl transition-all duration-300 hover:scale-105"
               >
                 {t("sellerWelcome.cta.loginCta", "Sign In to Dashboard")}
               </button>
             </div>
 
-            <div className="flex flex-wrap justify-center gap-6 pt-10 text-white/70 text-sm">
+            <div className="flex flex-wrap justify-center gap-6 pt-10 text-slate-600 dark:text-white/70 text-sm">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4" />
                 <span>{t("sellerWelcome.cta.free", "Free to sign up")}</span>
