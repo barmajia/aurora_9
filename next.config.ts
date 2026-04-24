@@ -17,10 +17,7 @@ const securityHeaders = [
     key: "X-Content-Type-Options",
     value: "nosniff",
   },
-  {
-    key: "X-XSS-Protection",
-    value: "1; mode=block",
-  },
+  // X-XSS-Protection is deprecated — modern browsers ignore it; CSP handles this
   {
     key: "Referrer-Policy",
     value: "strict-origin-when-cross-origin",
