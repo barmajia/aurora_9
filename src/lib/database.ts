@@ -89,6 +89,7 @@ export function validateQueryFilter(filter: QueryFilter): boolean {
 /**
  * Safely apply filters to a query
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function applyFilters(query: any, filters: QueryFilter[]): any {
   for (const filter of filters) {
     // Validate each filter
@@ -357,9 +358,11 @@ export async function safeSearch(
   if (searchColumns.length === 1) {
     query = query.ilike(searchColumns[0], `%${escapedTerm}%`);
   } else {
-    // Supabase doesn't support complex OR directly, so we fetch and filter client-side
-    // For better performance, consider using full-text search in Postgres
-    query = query.ilike(searchColumns[0], `%${escapedTerm}%`);
+    // Correctly build OR query for multiple columns
+    const orQuery = searchColumns
+      .map((col) => `${col}.ilike.%${escapedTerm}%`)
+      .join(",");
+    query = query.or(orQuery);
   }
 
   if (options.limit) {

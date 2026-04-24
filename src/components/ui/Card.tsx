@@ -6,7 +6,13 @@ import { cn } from "@/lib/utils";
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   hover?: boolean;
   glass?: boolean;
-  variant?: "default" | "elevated" | "outline" | "gradient" | "gloss";
+  variant?:
+    | "default"
+    | "elevated"
+    | "outline"
+    | "gradient"
+    | "gloss"
+    | "simple";
   size?: "sm" | "md" | "lg";
   interactive?: boolean;
 }
@@ -35,6 +41,8 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         "bg-gradient-to-br from-white to-zinc-50 dark:from-zinc-900 dark:to-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl shadow-lg",
       gloss:
         "bg-white/80 dark:bg-zinc-900/80 backdrop-blur-lg border border-white/20 dark:border-zinc-700/20 rounded-2xl shadow-xl",
+      simple:
+        "bg-white dark:bg-slate-900 border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-sm hover:shadow-md hover:border-neutral-300 dark:hover:border-neutral-600 transition-all duration-200",
     };
 
     const sizeStyles = {
@@ -105,7 +113,7 @@ const CardDescription = forwardRef<
 >(({ className, children, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-zinc-600 dark:text-white-400", className)}
+    className={cn("text-sm text-zinc-500 dark:text-zinc-400", className)}
     {...props}
   >
     {children}

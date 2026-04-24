@@ -27,16 +27,14 @@ function isRateLimited(ip: string): boolean {
   return false;
 }
 
+const apiRateLimits = new Map<string, { count: number; resetTime: number }>();
+
 function getClientIp(request: NextRequest): string {
   return (
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     request.headers.get("x-real-ip") ||
     "unknown"
   );
-}
-
-function sanitizeHeaderName(header: string): string {
-  return header.replace(/[^a-zA-Z0-9-]/g, "");
 }
 
 export function middleware(request: NextRequest) {
@@ -64,7 +62,6 @@ export function middleware(request: NextRequest) {
   // ========================================================================
   // API RATE LIMITING - General Endpoints
   // ========================================================================
-  const apiRateLimits = new Map<string, { count: number; resetTime: number }>();
   if (pathname.startsWith("/api/") && method !== "GET") {
     const now = Date.now();
     const key = `${clientIp}-${pathname}`;

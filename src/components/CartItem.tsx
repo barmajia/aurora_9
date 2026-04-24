@@ -43,7 +43,7 @@ function CartItemComponent({ item }: CartItemProps) {
         name: itemName,
         price: itemPrice,
         image: itemImage,
-        category: item.category,
+        category: item.category ?? "General",
       });
     },
     [addToWishlist, item.id, itemName, itemPrice, itemImage, item.category],

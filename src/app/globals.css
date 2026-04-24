@@ -4,37 +4,37 @@
 :root {
   color-scheme: light;
 
-  --background: #fafafa;
-  --foreground: #0a0a0a;
+  --background: #ffffff;
+  --foreground: #09090b;
 
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
   --secondary: #10b981;
-  --accent: rgba(24, 24, 27, 0.65);
+  --accent: rgba(9, 9, 11, 0.6);
 
-  --card-bg: rgba(255, 255, 255, 0.78);
-  --glass-bg: rgba(255, 255, 255, 0.62);
-  --glass-border: rgba(9, 9, 11, 0.08);
-  --glass-shadow: 0 1px 2px rgba(0, 0, 0, 0.04),
-    0 28px 60px rgba(0, 0, 0, 0.08);
+  --card-bg: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(9, 9, 11, 0.05);
+  --glass-shadow: 0 1px 3px rgba(0, 0, 0, 0.01),
+    0 20px 40px rgba(0, 0, 0, 0.05);
 }
 
 .dark {
   color-scheme: dark;
 
-  --background: #050506;
-  --foreground: #f4f4f5;
+  --background: #09090b;
+  --foreground: #ffffff;
 
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
-  --secondary: #10b981;
-  --accent: rgba(244, 244, 245, 0.72);
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --secondary: #34d399;
+  --accent: rgba(255, 255, 255, 0.6);
 
-  --card-bg: rgba(255, 255, 255, 0.045);
-  --glass-bg: rgba(5, 5, 6, 0.66);
-  --glass-border: rgba(244, 244, 245, 0.1);
-  --glass-shadow: 0 1px 2px rgba(0, 0, 0, 0.35),
-    0 40px 90px rgba(0, 0, 0, 0.55);
+  --card-bg: #09090b;
+  --glass-bg: rgba(9, 9, 11, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 1px 2px rgba(0, 0, 0, 0.3),
+    0 40px 90px rgba(0, 0, 0, 0.4);
 }
 
 @theme {
@@ -139,7 +139,7 @@
   }
 
   .error-content p {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(59, 130, 246, 0.6);
     margin-bottom: 1.5rem;
   }
 
@@ -179,8 +179,6 @@ html {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
   min-height: 100vh;
   overflow-x: hidden;
   font-family: 
@@ -191,7 +189,7 @@ body {
     "Segoe UI",
     sans-serif;
   background-image: 
-    radial-gradient(circle at top left, rgba(59, 130, 246, 0.12), transparent 20%),
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.1), transparent 20%),
     radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.08), transparent 25%);
 }
 
@@ -228,8 +226,8 @@ section {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.6); }
+  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
 }
 
 @keyframes shimmer {

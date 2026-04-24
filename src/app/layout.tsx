@@ -72,7 +72,7 @@ export default function RootLayout({
       suppressHydrationWarning
       data-scroll-behavior="smooth"
     >
-      <body className="bg-white dark:bg-black text-black dark:text-white transition-colors duration-300">
+      <body className="bg-background text-foreground transition-colors duration-300">
         <a href="#main-content" className="skip-link">
           Skip to main content
         </a>

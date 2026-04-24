@@ -4,13 +4,13 @@ import i18n from "@/lib/i18n";
 
 export interface User {
   id: string;
-  uuid: string;
+  uuid?: string;
   email: string;
   name: string;
   displayName?: string;
   avatar_url?: string;
   role: "customer" | "seller" | "factory" | "admin";
-  accountType: "customer" | "seller" | "factory" | "admin";
+  accountType?: "customer" | "seller" | "factory" | "admin";
   storeName?: string;
   factoryName?: string;
   isVerified?: boolean;
@@ -42,7 +42,6 @@ interface AuthState {
 }
 
 const STORAGE_KEY = "aurora-auth-session";
-const SESSION_TIMEOUT = 24 * 60 * 60 * 1000; // 24 hours
 
 // Helper to determine account type based on role and user data
 const determineAccountType = (
@@ -158,7 +157,7 @@ export const useAuthStore = create<AuthState>()(
         return true;
       },
 
-      getAuthHeader: () => {
+      getAuthHeader: (): Record<string, string> => {
         const state = get();
         if (!state.session?.token) {
           return {};

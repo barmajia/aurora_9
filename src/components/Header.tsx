@@ -123,17 +123,17 @@ function useHeaderState() {
 function HeaderLogo() {
   return (
     <Link href="/" className="group flex items-center gap-3 cursor-pointer">
-      <div className="relative h-10 w-10 overflow-hidden rounded-xl border border-zinc-200/70 bg-gradient-to-br from-zinc-100 via-white to-zinc-200 transition-all duration-500 group-hover:scale-105 dark:border-zinc-700 dark:from-zinc-800 dark:via-zinc-900 dark:to-zinc-700">
+      <div className="relative h-10 w-10 overflow-hidden rounded-xl border border-zinc-200 bg-gradient-to-br from-white via-zinc-50 to-zinc-200 transition-all duration-500 group-hover:scale-105 dark:border-zinc-800 dark:from-zinc-900 dark:via-zinc-950 dark:to-zinc-900">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,rgba(255,255,255,.7),transparent_55%)] dark:bg-[radial-gradient(circle_at_25%_25%,rgba(255,255,255,.12),transparent_55%)]" />
         <div className="relative flex h-full w-full items-center justify-center">
-          <Sparkles className="h-5 w-5 text-black dark:text-white" />
+          <Sparkles className="h-5 w-5 text-zinc-900 dark:text-white" />
         </div>
       </div>
       <div className="flex flex-col">
         <span className="text-2xl font-extrabold uppercase leading-none tracking-tight text-zinc-900 dark:text-white">
           Aurora
         </span>
-        <span className="mt-0.5 text-[10px] font-medium uppercase leading-none tracking-[0.2em] text-zinc-500 dark:text-zinc-400">
+        <span className="mt-0.5 text-[10px] font-medium uppercase leading-none tracking-[0.2em] text-zinc-400 dark:text-zinc-500">
           Ecosystem
         </span>
       </div>
@@ -332,19 +332,21 @@ function MobileHeaderMenu({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
             className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
             onClick={onClose}
           />
+
           <motion.div
-            initial={{ opacity: 0, x: "100%" }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: "100%" }}
-            transition={{ duration: 0.3 }}
-            className="fixed right-0 top-0 z-50 flex h-full w-full max-w-sm flex-col border-l border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 lg:hidden"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="fixed right-0 top-0 bottom-0 z-50 w-300px bg-white dark:bg-zinc-950 p-6 shadow-2xl lg:hidden flex flex-col"
           >
             <div className="mb-10 flex items-center justify-between">
               <div className="flex flex-col">
-                <span className="text-2xl font-bold uppercase tracking-tight text-black dark:text-white">
+                <span className="text-3xl font-bold uppercase tracking-tight text-black dark:text-white">
                   Aurora
                 </span>
                 <span className="mt-1 text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">
@@ -372,7 +374,6 @@ function MobileHeaderMenu({
                     onClick={onClose}
                     className={cn(
                       "rounded-xl border px-4 py-3 text-xl font-semibold transition-colors",
-                      isActive,
                     )}
                   >
                     {item.label}
@@ -482,42 +483,46 @@ function HeaderContent({
 }: HeaderContentProps) {
   // Dynamic classes for the sticky header effect
   const containerClasses = cn(
-    "relative flex items-center justify-between rounded-2xl border px-4 py-3 lg:px-6 lg:py-4",
-    "transition-all duration-500",
-    isScrolled
-      ? "border-zinc-200/70 bg-background/85 shadow-lg backdrop-blur-xl dark:border-zinc-800/60 dark:bg-zinc-950/75"
-      : "border-zinc-200/40 bg-background/65 shadow-sm backdrop-blur-lg dark:border-zinc-800/40 dark:bg-zinc-950/55",
+    "relative flex items-center justify-between px-4 py-3 lg:px-8 lg:py-4 transition-all duration-300 ease-out",
+    isScrolled ? "glass mx-4 mt-4 rounded-3xl" : "bg-transparent",
   );
 
   return (
-    <div className="mx-auto max-w-[1600px] px-4 lg:px-8 xl:px-12">
-      <div className={containerClasses}>
-        <HeaderLogo />
+    <div
+      className={cn(
+        "w-full transition-all duration-300 ease-out",
+        isScrolled ? "pt-1" : "pt-4",
+      )}
+    >
+      <div className="max-w-[1800px] mx-auto">
+        <div className={containerClasses}>
+          <HeaderLogo />
 
-        <div className="hidden flex-1 justify-center lg:flex">
-          <HeaderNavigation pathname={pathname} />
-        </div>
-
-        <div className="flex items-center gap-3 lg:gap-4">
-          <div className="flex items-center gap-1.5 lg:hidden">
-            <WishlistIconButton count={wishlistCount} />
-            <CartIconButton count={totalCartItems} />
+          <div className="hidden flex-1 justify-center lg:flex">
+            <HeaderNavigation pathname={pathname} />
           </div>
-          <button
-            className="flex h-10 w-10 items-center justify-center rounded-full text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800 lg:hidden"
-            onClick={onMobileMenuOpen}
-            title="Open menu"
-            type="button"
-          >
-            <Menu size={22} />
-          </button>
-          <HeaderRightSection
-            totalCartItems={totalCartItems}
-            wishlistCount={wishlistCount}
-            user={user}
-            onProfileClick={onProfileClick}
-            router={router}
-          />
+
+          <div className="flex items-center gap-3 lg:gap-4">
+            <div className="flex items-center gap-1.5 lg:hidden">
+              <WishlistIconButton count={wishlistCount} />
+              <CartIconButton count={totalCartItems} />
+            </div>
+            <button
+              className="flex h-10 w-10 items-center justify-center rounded-full text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800 lg:hidden"
+              onClick={onMobileMenuOpen}
+              title="Open menu"
+              type="button"
+            >
+              <Menu size={22} />
+            </button>
+            <HeaderRightSection
+              totalCartItems={totalCartItems}
+              wishlistCount={wishlistCount}
+              user={user}
+              onProfileClick={onProfileClick}
+              router={router}
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -551,22 +556,19 @@ export default function Header() {
   return (
     <>
       {/* Sticky header keeps spacing consistent across pages */}
-      <header
-        className={cn(
-          "sticky left-0 right-0 top-0 z-30 transition-all duration-500",
-          "py-3 lg:py-4",
-        )}
-      >
-        <HeaderContent
-          isScrolled={isScrolled}
-          pathname={pathname}
-          totalCartItems={totalCartItems}
-          wishlistCount={wishlistItems.length}
-          user={user}
-          onProfileClick={handleProfileClick}
-          onMobileMenuOpen={() => setMobileMenuOpen(true)}
-          router={router}
-        />
+      <header className="fixed top-0 left-0 w-full z-50 pointer-events-none">
+        <div className="pointer-events-auto">
+          <HeaderContent
+            isScrolled={isScrolled}
+            pathname={pathname}
+            totalCartItems={totalCartItems}
+            wishlistCount={wishlistItems.length}
+            user={user}
+            onProfileClick={handleProfileClick}
+            onMobileMenuOpen={() => setMobileMenuOpen(true)}
+            router={router}
+          />
+        </div>
       </header>
 
       {/* Mobile Menu (Overlays everything, so z-50 remains correct) */}

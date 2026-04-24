@@ -11,7 +11,7 @@ export interface Product {
   reviews?: number;
   badge?: string;
   status?: "active" | "inactive";
-  stock?: number | boolean;
+  stock?: number;
   quantity?: number;
   oldPrice?: number;
   currency?: string;
@@ -29,4 +29,18 @@ export interface WishlistItem {
   image: string;
   category: string;
   description?: string;
+}
+
+export interface Template {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  category: string;
+  thumbnailUrl: string;
+  isPremium: boolean;
+  price?: number;
+  productAsins: string[];
+  features: string[];
+  layoutType: "grid" | "list" | "feature-rich" | "social-profile";
 }

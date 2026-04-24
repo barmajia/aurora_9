@@ -6,7 +6,8 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ShoppingBag, CreditCard, Lock, Truck, CheckCircle, 
-  ArrowLeft, ArrowRight, Package, AlertTriangle, Sparkles, ShieldCheck
+  ArrowLeft, ArrowRight, Package, AlertTriangle, Sparkles, ShieldCheck,
+  QrCode, Zap
 } from 'lucide-react';
 import { useCartStore } from '@/store/cart';
 import { useAuthStore } from '@/store/auth';
@@ -39,8 +40,10 @@ export default function CheckoutPage() {
   const { items, clearCart } = useCartStore();
   const { user } = useAuthStore();
   const [step, setStep] = useState<'shipping' | 'payment' | 'confirm'>('shipping');
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'fawry'>('card');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [fawryRef, setFawryRef] = useState<string | null>(null);
   
   const [form, setForm] = useState<CheckoutForm>({
     firstName: '',
@@ -84,6 +87,7 @@ export default function CheckoutPage() {
   };
 
   const validatePayment = () => {
+    if (paymentMethod === 'fawry') return true;
     const newErrors: Record<string, string> = {};
     if (!form.cardNumber || form.cardNumber.replace(/\s/g, '').length < 16) {
       newErrors.cardNumber = 'Invalid card number';
@@ -106,6 +110,10 @@ export default function CheckoutPage() {
 
   const handlePaymentSubmit = () => {
     if (validatePayment()) {
+      if (paymentMethod === 'fawry' && !fawryRef) {
+        const ref = `FWRY-${Math.random().toString(36).substring(2, 10).toUpperCase()}-${Date.now().toString().slice(-4)}`;
+        setFawryRef(ref);
+      }
       setStep('confirm');
     }
   };
@@ -119,6 +127,8 @@ export default function CheckoutPage() {
           user_id: user?.id,
           total: total,
           status: 'pending',
+          payment_method: paymentMethod,
+          fawry_ref: fawryRef,
           shipping_address: JSON.stringify({
             name: `${form.firstName} ${form.lastName}`,
             address: form.address,
@@ -286,49 +296,90 @@ export default function CheckoutPage() {
                      </div>
                   </div>
 
-                  <div className="p-6 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-5">
-                    <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
-                       <ShieldCheck className="text-emerald-500" size={24} />
-                    </div>
-                    <div className="flex flex-col">
-                       <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">Secured Transaction Protocol</span>
-                       <span className="text-[9px] font-bold text-white/20 italic tracking-wide">Bank-grade encryption active</span>
-                    </div>
+                  {/* Payment Method Selector */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <button 
+                      onClick={() => setPaymentMethod('card')}
+                      className={cn(
+                        "p-6 rounded-3xl border transition-all flex flex-col gap-3",
+                        paymentMethod === 'card' 
+                          ? "bg-white border-white text-black shadow-xl" 
+                          : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10"
+                      )}
+                    >
+                      <CreditCard size={24} />
+                      <span className="text-[10px] font-black uppercase tracking-widest">Secure Card</span>
+                    </button>
+                    <button 
+                      onClick={() => setPaymentMethod('fawry')}
+                      className={cn(
+                        "p-6 rounded-3xl border transition-all flex flex-col gap-3",
+                        paymentMethod === 'fawry' 
+                          ? "bg-[#FFD700] border-[#FFD700] text-black shadow-xl" 
+                          : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10"
+                      )}
+                    >
+                      <Zap size={24} />
+                      <span className="text-[10px] font-black uppercase tracking-widest">Fawry Pay</span>
+                    </button>
                   </div>
 
-                  <Input
-                    label="Credit/Debit Number"
-                    value={form.cardNumber}
-                    onChange={(e) => setForm({ ...form, cardNumber: e.target.value.replace(/\D/g, '').replace(/(\d{4})/g, '$1 ').trim() })}
-                    error={errors.cardNumber}
-                    placeholder="CARD IDENTIFIER"
-                    maxLength={19}
-                    leftIcon={<CreditCard size={18} />}
-                    required
-                  />
+                  {paymentMethod === 'card' ? (
+                    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                      <Input
+                        label="Credit/Debit Number"
+                        value={form.cardNumber}
+                        onChange={(e) => setForm({ ...form, cardNumber: e.target.value.replace(/\D/g, '').replace(/(\d{4})/g, '$1 ').trim() })}
+                        error={errors.cardNumber}
+                        placeholder="CARD IDENTIFIER"
+                        maxLength={19}
+                        leftIcon={<CreditCard size={18} />}
+                        required
+                      />
 
-                  <div className="grid grid-cols-2 gap-8">
-                    <Input
-                      label="Expiration Date"
-                      value={form.expDate}
-                      onChange={(e) => setForm({ ...form, expDate: e.target.value.replace(/\D/g, '').replace(/(\d{2})(\d{2})/, '$1/$2').trim() })}
-                      error={errors.expDate}
-                      placeholder="MM/YY"
-                      maxLength={5}
-                      required
-                    />
-                    <Input
-                      label="CVV Code"
-                      type="password"
-                      value={form.cvv}
-                      onChange={(e) => setForm({ ...form, cvv: e.target.value.replace(/\D/g, '').slice(0, 4) })}
-                      error={errors.cvv}
-                      placeholder="KEY"
-                      maxLength={4}
-                      leftIcon={<Lock size={18} />}
-                      required
-                    />
-                  </div>
+                      <div className="grid grid-cols-2 gap-8">
+                        <Input
+                          label="Expiration Date"
+                          value={form.expDate}
+                          onChange={(e) => setForm({ ...form, expDate: e.target.value.replace(/\D/g, '').replace(/(\d{2})(\d{2})/, '$1/$2').trim() })}
+                          error={errors.expDate}
+                          placeholder="MM/YY"
+                          maxLength={5}
+                          required
+                        />
+                        <Input
+                          label="CVV Code"
+                          type="password"
+                          value={form.cvv}
+                          onChange={(e) => setForm({ ...form, cvv: e.target.value.replace(/\D/g, '').slice(0, 4) })}
+                          error={errors.cvv}
+                          placeholder="KEY"
+                          maxLength={4}
+                          leftIcon={<Lock size={18} />}
+                          required
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-10 rounded-[2.5rem] bg-[#FFD700]/5 border border-[#FFD700]/20 space-y-6 animate-in fade-in zoom-in-95 duration-500">
+                       <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-[#FFD700] rounded-2xl flex items-center justify-center text-black">
+                             <QrCode size={24} />
+                          </div>
+                          <div>
+                             <h4 className="text-sm font-black text-[#FFD700] uppercase tracking-tighter italic">Fawry Secure Node</h4>
+                             <p className="text-[10px] text-[#FFD700]/60 font-bold uppercase tracking-widest">Instant Reference Protocol</p>
+                          </div>
+                       </div>
+                       <p className="text-xs text-white/60 leading-relaxed">
+                          A unique secure reference key will be generated upon authorization. You can complete your payment at any Fawry point or via the Fawry app using this encrypted token.
+                       </p>
+                       <div className="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5">
+                          <ShieldCheck size={14} className="text-[#FFD700]" />
+                          <span className="text-[9px] font-black uppercase text-white/40 tracking-widest">Encrypted Fawry Gateway Active</span>
+                       </div>
+                    </div>
+                  )}
 
                   <div className="flex justify-between pt-8">
                     <Button variant="ghost" onClick={() => setStep('shipping')} className="text-[10px] font-black uppercase tracking-widest opacity-40 hover:opacity-100 italic">
@@ -372,14 +423,27 @@ export default function CheckoutPage() {
 
                     <div className="p-8 bg-white/5 rounded-[2.5rem] border border-white/5">
                       <span className="text-[9px] font-black uppercase tracking-widest text-white/20 mb-4 block italic leading-none">Payment Node</span>
-                      <div className="flex items-center gap-3 mb-4">
-                         <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
-                            <CreditCard size={14} className="text-white/60" />
-                         </div>
-                         <span className="text-sm font-bold text-white">VISA ···· {form.cardNumber.slice(-4)}</span>
-                      </div>
-                      <p className="text-[9px] font-black uppercase tracking-widest text-white/20 mb-1 leading-none">Expiry</p>
-                      <p className="text-xs font-bold text-white leading-none">{form.expDate}</p>
+                      {paymentMethod === 'card' ? (
+                        <div className="flex items-center gap-3">
+                           <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+                              <CreditCard size={14} className="text-white/60" />
+                           </div>
+                           <span className="text-sm font-bold text-white uppercase tracking-tighter italic">VISA ···· {form.cardNumber.slice(-4)}</span>
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                           <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 bg-[#FFD700] rounded-lg flex items-center justify-center text-black">
+                                 <Zap size={14} />
+                              </div>
+                              <span className="text-sm font-black text-[#FFD700] uppercase tracking-tighter italic">Fawry Protocol</span>
+                           </div>
+                           <div className="p-3 bg-white/5 rounded-xl border border-white/5">
+                              <p className="text-[8px] font-black uppercase text-white/20 tracking-widest mb-1">Generated Key</p>
+                              <p className="text-xs font-black text-white tracking-widest">{fawryRef}</p>
+                           </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 

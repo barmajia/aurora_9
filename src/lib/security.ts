@@ -5,6 +5,11 @@ const JWT_SECRET =
   process.env.JWT_SECRET || "default-secret-key-change-in-production";
 const JWT_EXPIRY = parseInt(process.env.JWT_EXPIRY || "86400", 10); // 24 hours
 
+/**
+ * Aurora Security Protocol
+ * Provides ID obfuscation, SQL injection prevention, and authentication layers.
+ */
+
 // ============================================================================
 // INPUT VALIDATION & SANITIZATION
 // ============================================================================
@@ -255,11 +260,11 @@ export function verifyToken(token: string): TokenPayload | null {
     // Decode and verify payload
     const payload = JSON.parse(
       Buffer.from(payloadEncoded, "base64url").toString("utf8"),
-    ) as TokenPayload & { exp: number };
+    ) as TokenPayload & { exp?: number; iat?: number };
 
     // Check expiration
     const now = Math.floor(Date.now() / 1000);
-    if (payload.exp < now) {
+    if (!payload.exp || payload.exp < now) {
       return null;
     }
 
@@ -408,6 +413,36 @@ export function validateUUID(uuid: string): boolean {
 export function validateNumericId(id: string | number): boolean {
   const num = Number(id);
   return Number.isInteger(num) && num > 0;
+}
+
+// ============================================================================
+// OBFUSCATION LAYER (For URLs)
+// ============================================================================
+
+export function obfuscateId(id: string): string {
+  if (!id) return "";
+  try {
+    // Simple Base64 + padding to make it look like a "Key"
+    const b64 = Buffer.from(id).toString("base64");
+    return `node_${b64.replace(/=/g, "")}_${Math.floor(Math.random() * 1000)}`;
+  } catch (e) {
+    return id;
+  }
+}
+
+export function deobfuscateId(key: string): string {
+  if (!key) return "";
+  try {
+    // Extract the base64 part
+    const parts = key.split("_");
+    if (parts.length < 2) return key;
+    const b64 = parts[1];
+    // Add back padding if needed
+    const padded = b64.padEnd(b64.length + (4 - (b64.length % 4)) % 4, "=");
+    return Buffer.from(padded, "base64").toString("utf-8");
+  } catch (e) {
+    return key;
+  }
 }
 
 // ============================================================================
