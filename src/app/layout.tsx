@@ -9,6 +9,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import Providers from "@/components/Providers";
 import SearchCenter from "@/components/SearchCenter";
 import { CookieConsent } from "@/components/ui/CookieConsent";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -90,6 +91,7 @@ export default function RootLayout({
             </CartProvider>
           </Providers>
         </ErrorBoundary>
+        <Analytics />
       </body>
     </html>
   );
