@@ -132,9 +132,10 @@ export async function POST(request: NextRequest) {
     // ====================================================================
     // SUCCESS RESPONSE
     // ====================================================================
+    // SECURITY: Token is set as httpOnly cookie ONLY — it is NOT returned in
+    // the response body to prevent XSS-based token theft from localStorage.
     const response = NextResponse.json({
       success: true,
-      token,
       user: {
         id: "admin",
         email: sanitizedEmail,

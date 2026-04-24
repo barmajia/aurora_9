@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 
-const JWT_SECRET =
-  process.env.JWT_SECRET || "default-secret-key-change-in-production";
+const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRY = parseInt(process.env.JWT_EXPIRY || "86400", 10); // 24 hours
+
+if (!JWT_SECRET) {
+  // In production this is a critical misconfiguration — tokens cannot be verified securely
+  console.error(
+    "🚨 CRITICAL: JWT_SECRET environment variable is not set. "
+    + "All JWT tokens will use an insecure fallback. "
+    + "Set JWT_SECRET in your environment variables immediately."
+  );
+}
+
+const _JWT_SECRET = JWT_SECRET || "default-secret-key-change-in-production";
 
 /**
  * Aurora Security Protocol
@@ -230,7 +240,7 @@ export function generateToken(
     const signature = createJwtSignature(
       headerEncoded,
       payloadEncoded,
-      JWT_SECRET,
+      _JWT_SECRET,
     );
 
     return `${headerEncoded}.${payloadEncoded}.${signature}`;
@@ -250,7 +260,7 @@ export function verifyToken(token: string): TokenPayload | null {
     const signatureCalculated = createJwtSignature(
       headerEncoded,
       payloadEncoded,
-      JWT_SECRET,
+      _JWT_SECRET,
     );
 
     if (signatureProvided !== signatureCalculated) {
@@ -422,9 +432,10 @@ export function validateNumericId(id: string | number): boolean {
 export function obfuscateId(id: string): string {
   if (!id) return "";
   try {
-    // Simple Base64 + padding to make it look like a "Key"
     const b64 = Buffer.from(id).toString("base64");
-    return `node_${b64.replace(/=/g, "")}_${Math.floor(Math.random() * 1000)}`;
+    // Use crypto.randomBytes for cryptographically secure suffix (not Math.random)
+    const suffix = crypto.randomBytes(4).toString("hex");
+    return `node_${b64.replace(/=/g, "")}_${suffix}`;
   } catch (e) {
     return id;
   }
@@ -445,33 +456,6 @@ export function deobfuscateId(key: string): string {
   }
 }
 
-// ============================================================================
-// CONTENT SECURITY POLICY HELPERS
-// ============================================================================
-
-export function getCspHeaders() {
-  return {
-    "Content-Security-Policy":
-      "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " +
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-      "img-src 'self' data: https:; " +
-      "font-src 'self' data: https://fonts.gstatic.com; " +
-      "connect-src 'self' https://api.stripe.com https://*.supabase.co; " +
-      "frame-ancestors 'none'; " +
-      "form-action 'self'; " +
-      "base-uri 'self';",
-  };
-}
-
-export function getSecurityHeaders() {
-  return {
-    "X-Content-Type-Options": "nosniff",
-    "X-Frame-Options": "DENY",
-    "X-XSS-Protection": "1; mode=block",
-    "Referrer-Policy": "strict-origin-when-cross-origin",
-    "Permissions-Policy":
-      "camera=(), microphone=(), geolocation=(), payment=()",
-    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-  };
-}
+// NOTE: getCspHeaders and getSecurityHeaders are defined in src/lib/headers.ts
+// which is the single source of truth for all security headers.
+// Do not duplicate those definitions here.

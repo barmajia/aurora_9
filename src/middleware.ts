@@ -30,9 +30,11 @@ function isRateLimited(ip: string): boolean {
 const apiRateLimits = new Map<string, { count: number; resetTime: number }>();
 
 function getClientIp(request: NextRequest): string {
+  // x-real-ip is injected by Vercel infrastructure and cannot be spoofed by clients
+  // x-forwarded-for CAN be faked by sending a custom header, so trust it only as fallback
   return (
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     request.headers.get("x-real-ip") ||
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     "unknown"
   );
 }
@@ -87,9 +89,11 @@ export function middleware(request: NextRequest) {
   // CORS CONFIGURATION - Origin Validation
   // ========================================================================
   const origin = request.headers.get("origin");
-  if (origin && ALLOWED_ORIGINS.some((allowed) => origin.includes(allowed))) {
+  if (origin && ALLOWED_ORIGINS.some((allowed) => origin === allowed)) {
+    // Exact match only — prevents subdomain/substring spoofing attacks
     response.headers.set("Access-Control-Allow-Origin", origin);
-  } else if (ALLOWED_ORIGINS.length > 0) {
+  } else if (!origin && ALLOWED_ORIGINS.length > 0) {
+    // Non-browser requests (server-to-server) — allow with first origin
     response.headers.set("Access-Control-Allow-Origin", ALLOWED_ORIGINS[0]);
   }
 
@@ -158,8 +162,11 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/api/:path*",
-    "/seller/login/:path*",
-    "/factory/login/:path*",
+    "/seller/:path*",
+    "/factory/:path*",
     "/login/:path*",
+    "/manage/:path*",
+    "/profile/:path*",
+    "/checkout/:path*",
   ],
 };

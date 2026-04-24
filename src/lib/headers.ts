@@ -22,11 +22,11 @@ export function getSecurityHeaders() {
   return {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "SAMEORIGIN",
-    "X-XSS-Protection": "1; mode=block",
+    // X-XSS-Protection is deprecated — modern browsers ignore it, CSP is the replacement
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "Permissions-Policy":
       "camera=(), microphone=(), geolocation=(), payment=(self), usb=(), screen-wake-lock=(self)",
     "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
-    "Expect-CT": "max-age=86400, enforce",
+    // Expect-CT is deprecated since 2021 and removed from Chrome — omitted intentionally
   };
 }
