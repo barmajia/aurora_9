@@ -132,7 +132,8 @@ export default function SellerHeader() {
             <div className="flex items-center gap-3">
               <div className="flex flex-col items-end hidden lg:flex">
                 <span className="text-[10px] font-black uppercase tracking-widest text-white">
-                  {(user?.user_metadata as { full_name?: string })?.full_name ||
+                  {user?.displayName ||
+                    user?.name ||
                     user?.email?.split("@")[0] ||
                     "Seller Admin"}
                 </span>
