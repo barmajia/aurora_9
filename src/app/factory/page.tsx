@@ -10,16 +10,11 @@ import {
   Shield,
   Globe,
   ArrowRight,
-  CheckCircle,
-  Zap,
-  CheckCircle2,
-  Sparkles,
+
   ChevronRight,
   Clock,
   Award,
-  Settings,
   ArrowUp,
-  TrendingUp,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
@@ -226,9 +221,8 @@ export default function FactoryPage() {
       {/* Scroll to top button */}
       <motion.button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className={`fixed bottom-8 right-8 z-50 p-3 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30 transition-all duration-300 hover:scale-110 ${
-          isScrolled ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed bottom-8 right-8 z-50 p-3 rounded-full bg-linear-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30 transition-all duration-300 hover:scale-110 ${isScrolled ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
         animate={{ y: isScrolled ? 0 : 100 }}
         aria-label="Scroll to top"
       >
@@ -236,7 +230,7 @@ export default function FactoryPage() {
       </motion.button>
 
       {/* ==================== HERO SECTION ==================== */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-950">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-linear-to-br from-slate-950 via-blue-950 to-indigo-950">
         {/* Animated Background */}
         <div className="absolute inset-0">
           {/* Grid pattern */}
@@ -276,11 +270,11 @@ export default function FactoryPage() {
               transition={{ delay: 0.2 }}
             >
               <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">
-                <span className="bg-gradient-to-r from-white via-blue-200 to-indigo-200 bg-clip-text text-transparent">
+                <span className="bg-linear-to-r from-white via-blue-200 to-indigo-200 bg-clip-text text-transparent">
                   Power Your Factory
                 </span>
                 <br />
-                <span className="bg-gradient-to-r from-blue-300 via-indigo-300 to-cyan-300 bg-clip-text text-transparent">
+                <span className="bg-linear-to-r from-blue-300 via-indigo-300 to-cyan-300 bg-clip-text text-transparent">
                   Reach the World
                 </span>
               </h1>
@@ -306,7 +300,7 @@ export default function FactoryPage() {
               className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4"
             >
               <Link href="/factory/signup">
-                <button className="group flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-lg px-8 py-4 rounded-xl shadow-2xl shadow-blue-500/25 transition-all duration-300 hover:scale-105 hover:shadow-blue-500/40 font-semibold">
+                <button className="group flex items-center gap-2 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-lg px-8 py-4 rounded-xl shadow-2xl shadow-blue-500/25 transition-all duration-300 hover:scale-105 hover:shadow-blue-500/40 font-semibold">
                   Sign Up as Factory
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </button>
@@ -354,7 +348,7 @@ export default function FactoryPage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-gradient-to-b from-background to-zinc-50 dark:to-zinc-950">
+      <section className="py-16 bg-linear-to-b from-background to-zinc-50 dark:to-zinc-950">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {FACTORY_STATS.map((stat, idx) => (
@@ -366,7 +360,7 @@ export default function FactoryPage() {
                 transition={{ delay: idx * 0.1 }}
                 className="text-center"
               >
-                <div className="text-3xl md:text-4xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                <div className="text-3xl md:text-4xl font-black bg-linear-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
                   {stat.number}
                 </div>
                 <div className="text-sm text-zinc-600 dark:text-zinc-400 font-medium">
@@ -409,7 +403,7 @@ export default function FactoryPage() {
                   className="aurora-card p-8 hover:shadow-lg transition-all duration-300 group"
                 >
                   <div
-                    className={`inline-flex p-4 bg-gradient-to-br ${feature.color} rounded-xl mb-4 text-white group-hover:scale-110 transition-transform`}
+                    className={`inline-flex p-4 bg-linear-to-br ${feature.color} rounded-xl mb-4 text-white group-hover:scale-110 transition-transform`}
                   >
                     <Icon className="h-8 w-8" />
                   </div>
@@ -427,7 +421,7 @@ export default function FactoryPage() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-20 bg-gradient-to-b from-background to-zinc-50 dark:to-zinc-950">
+      <section className="py-20 bg-linear-to-b from-background to-zinc-50 dark:to-zinc-950">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -455,11 +449,11 @@ export default function FactoryPage() {
               >
                 {/* Connector Line */}
                 {idx < HOW_IT_WORKS.length - 1 && (
-                  <div className="hidden lg:block absolute top-12 left-[60%] right-[-25%] h-1 bg-gradient-to-r from-indigo-500 to-transparent" />
+                  <div className="hidden lg:block absolute top-12 left-[60%] right-[-25%] h-1 bg-linear-to-r from-indigo-500 to-transparent" />
                 )}
 
                 <div className="aurora-card p-8 text-center">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold flex items-center justify-center mx-auto mb-4 text-lg">
+                  <div className="w-12 h-12 rounded-full bg-linear-to-r from-indigo-600 to-purple-600 text-white font-bold flex items-center justify-center mx-auto mb-4 text-lg">
                     {item.step}
                   </div>
                   <h3 className="text-lg font-bold text-foreground mb-2">
@@ -482,7 +476,7 @@ export default function FactoryPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl p-12 text-center text-white"
+            className="bg-linear-to-r from-indigo-600 to-purple-600 rounded-3xl p-12 text-center text-white"
           >
             <h2 className="text-3xl sm:text-4xl font-black mb-4">
               Ready to grow your factory?

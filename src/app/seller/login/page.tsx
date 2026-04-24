@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -13,7 +14,11 @@ import {
   BarChart3,
   Package,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
+import { useAuthStore } from "@/store/auth";
+import { useToastStore } from "@/store/toast";
 
 // Background gradient elements
 function BackgroundGradients({ theme }: { theme: "light" | "dark" }) {
@@ -115,6 +120,9 @@ interface FormInputProps {
   onTogglePassword?: () => void;
   hasPasswordToggle?: boolean;
   theme?: "light" | "dark";
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
 }
 
 function FormInput({
@@ -126,6 +134,9 @@ function FormInput({
   onTogglePassword,
   hasPasswordToggle,
   theme = "dark",
+  value,
+  onChange,
+  required,
 }: FormInputProps) {
   const labelClass = theme === "light" ? "text-slate-700" : "text-white";
   const bgClass =
@@ -158,6 +169,9 @@ function FormInput({
           type={hasPasswordToggle ? (showPassword ? "text" : "password") : type}
           className={`w-full pl-12 pr-12 h-14 border rounded-2xl focus:ring-2 transition-all text-lg outline-none ${bgClass}`}
           placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          required={required}
         />
         {hasPasswordToggle && (
           <button
@@ -179,14 +193,28 @@ function FormInput({
 
 // Login form section
 interface LoginFormProps {
+  email: string;
+  setEmail: (val: string) => void;
+  password: string;
+  setPassword: (val: string) => void;
   showPassword: boolean;
   onTogglePassword: () => void;
+  onSubmit: (e: React.FormEvent) => void;
+  loading: boolean;
+  error: string | null;
   theme?: "light" | "dark";
 }
 
 function LoginForm({
+  email,
+  setEmail,
+  password,
+  setPassword,
   showPassword,
   onTogglePassword,
+  onSubmit,
+  loading,
+  error,
   theme = "dark",
 }: LoginFormProps) {
   const linkClass =
@@ -199,11 +227,20 @@ function LoginForm({
       : "bg-emerald-600 hover:bg-emerald-700 text-white";
 
   return (
-    <div className="space-y-6">
+    <form onSubmit={onSubmit} className="space-y-6">
+      {error && (
+        <div className="p-4 bg-rose-500/20 border border-rose-500/30 rounded-2xl text-rose-500 text-sm font-bold text-center animate-in fade-in zoom-in duration-300">
+          {error}
+        </div>
+      )}
+
       <FormInput
         label="Business Email"
         type="email"
         placeholder="Enter your business email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
         icon={
           <Mail
             className={`h-5 w-5 ${theme === "light" ? "text-slate-400" : "text-white/40"}`}
@@ -229,6 +266,9 @@ function LoginForm({
         <FormInput
           type="password"
           placeholder="Enter your password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
           icon={
             <Lock
               className={`h-5 w-5 ${theme === "light" ? "text-slate-400" : "text-white/40"}`}
@@ -243,11 +283,20 @@ function LoginForm({
       </div>
 
       <button
-        className={`w-full h-14 text-lg font-bold rounded-2xl shadow-lg shadow-emerald-500/20 transition-all active:scale-[0.98] ${buttonClass}`}
+        type="submit"
+        disabled={loading}
+        className={`w-full h-14 text-lg font-bold rounded-2xl shadow-lg shadow-emerald-500/20 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed ${buttonClass}`}
       >
-        Access Dashboard
+        {loading ? (
+          <div className="flex items-center justify-center gap-2">
+            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            Verifying Node...
+          </div>
+        ) : (
+          "Access Dashboard"
+        )}
       </button>
-    </div>
+    </form>
   );
 }
 
@@ -368,8 +417,71 @@ function Footer({ theme = "dark" }: { theme?: "light" | "dark" }) {
 
 // Main component
 export default function SellerLoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("dark");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
+  const { setUser } = useAuthStore();
+  const addToast = useToastStore((state) => state.addToast);
+
+  // Handle Login
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      // 1. Auth check
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+
+      if (authError) {
+        if (authError.message === "Invalid login credentials") {
+          throw new Error("Invalid email or password. Please verify your credentials or create a new seller account.");
+        }
+        throw authError;
+      }
+
+      // 2. Seller table verification (by user_id)
+      // const { data: sellerData, error: sellerError } = await supabase
+      //   .from("sellers")
+      //   .select("*")
+      //   .eq("user_id", authData.user.id)
+      //   .single();
+
+      // if (sellerError || !sellerData) {
+      //   // Sign out if not a seller
+      //   await supabase.auth.signOut();
+      //   throw new Error("Access denied: Node not registered in sellers matrix.");
+      // }
+
+      // 3. Update store and redirect
+      // setUser({
+      //   id: authData.user.id,
+      //   email: authData.user.email || "",
+      //   // name: sellerData.full_name || "Seller Admin",
+      //   role: "seller",
+      //   isVerified: sellerData.is_verified,
+      //   storeName: sellerData.full_name,
+      // });
+
+      addToast("Uplink established. Redirecting to dashboard...", "success");
+      router.push("/seller/dashboard");
+    } catch (err: unknown) {
+      console.error("Login Error:", err);
+      const message = err instanceof Error ? err.message : "Failed to establish connection to Aurora network.";
+      setError(message);
+      addToast(message, "error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const bgClass =
     theme === "light"
@@ -392,8 +504,15 @@ export default function SellerLoginPage() {
           className={`p-8 sm:p-10 rounded-[2.5rem] shadow-2xl border animate-in fade-in slide-in-from-bottom-8 duration-700 ${theme === "light" ? "bg-white/50 backdrop-blur-xl border-black/10" : "bg-white/5 backdrop-blur-xl border-white/10"}`}
         >
           <LoginForm
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
             showPassword={showPassword}
             onTogglePassword={() => setShowPassword(!showPassword)}
+            onSubmit={handleLogin}
+            loading={loading}
+            error={error}
             theme={theme}
           />
           <Divider theme={theme} />

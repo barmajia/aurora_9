@@ -7,7 +7,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative bg-background text-foreground border-t border-zinc-100 dark:border-zinc-900 overflow-hidden">
+    <footer className="relative bg-zinc-50 dark:bg-background text-foreground border-t border-zinc-100 dark:border-zinc-900 overflow-hidden">
       {/* Decorative Elements */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full pointer-events-none opacity-50">
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px]" />
