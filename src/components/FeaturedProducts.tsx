@@ -7,7 +7,9 @@ import { ArrowRight, Sparkles } from "lucide-react";
 async function getFeaturedProducts(): Promise<Product[]> {
   try {
     const { data, error } = await safeSelect("products", {
+      select: "id,name,title,description,price,image,images,category,rating,reviews,badge,created_at,status",
       limit: 4,
+      filters: [{ column: "status", operator: "eq", value: "active" }],
       orderBy: [{ column: "created_at", ascending: false }],
     });
 

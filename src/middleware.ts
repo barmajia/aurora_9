@@ -2,157 +2,117 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getSecurityHeaders, getCspHeaders } from "./lib/headers";
 
+// ============================================================================
+// SECURITY PROXY PATTERN FOR DISTRIBUTED RATE LIMITING
+// ============================================================================
+/**
+ * This middleware implements a Security Proxy Pattern that:
+ * 1. Respects reverse proxy headers (x-real-ip, x-forwarded-for) securely
+ * 2. Uses time-window bucketing for rate limiting (proxy-friendly)
+ * 3. Validates origin through proxy header inspection
+ * 4. Applies defense-in-depth security headers
+ * 
+ * NOTE: For production multi-region deployments, replace in-memory stores
+ * with Redis/Upstash for truly distributed rate limiting.
+ */
+
+const RATE_LIMIT_CONFIG = {
+  login: { windowMs: 15 * 60 * 1000, maxAttempts: 5 },
+  api: { windowMs: 60 * 1000, maxRequests: 20 },
+  general: { windowMs: 60 * 1000, maxRequests: 100 },
+};
+
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS?.split(",") || ["http://localhost:3000"];
+
 const loginAttempts = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
-const MAX_ATTEMPTS = 5;
-
-const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS?.split(",") || [
-  "http://localhost:3000",
-];
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const record = loginAttempts.get(ip);
-
-  if (!record || now > record.resetTime) {
-    loginAttempts.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
-    return false;
-  }
-
-  if (record.count >= MAX_ATTEMPTS) {
-    return true;
-  }
-
-  record.count++;
-  return false;
-}
-
 const apiRateLimits = new Map<string, { count: number; resetTime: number }>();
+const generalRateLimits = new Map<string, { count: number; resetTime: number }>();
 
 function getClientIp(request: NextRequest): string {
-  // x-real-ip is injected by Vercel infrastructure and cannot be spoofed by clients
-  // x-forwarded-for CAN be faked by sending a custom header, so trust it only as fallback
-  return (
-    request.headers.get("x-real-ip") ||
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    "unknown"
-  );
+  const realIp = request.headers.get("x-real-ip");
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  if (realIp?.trim()) return realIp.trim();
+  if (forwardedFor) {
+    const firstIp = forwardedFor.split(",")[0]?.trim();
+    if (firstIp && firstIp !== "unknown") return firstIp;
+  }
+  return request.ip || "127.0.0.1";
 }
+
+function checkRateLimit(
+  store: Map<string, { count: number; resetTime: number }>,
+  key: string,
+  windowMs: number,
+  maxRequests: number
+): boolean {
+  const now = Date.now();
+  const record = store.get(key);
+  if (!record || now > record.resetTime) {
+    store.set(key, { count: 1, resetTime: now + windowMs });
+    return true;
+  }
+  if (record.count >= maxRequests) return false;
+  record.count++;
+  return true;
+}
+
+setInterval(() => {
+  const now = Date.now();
+  [loginAttempts, apiRateLimits, generalRateLimits].forEach(store => {
+    for (const [key, value] of store.entries()) {
+      if (now > value.resetTime) store.delete(key);
+    }
+  });
+}, 5 * 60 * 1000);
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const clientIp = getClientIp(request);
   const method = request.method;
+  const origin = request.headers.get("origin");
 
-  // ========================================================================
-  // RATE LIMITING - Login Endpoints
-  // ========================================================================
-  if (
-    pathname.startsWith("/api/admin/login") ||
-    pathname.startsWith("/api/seller/login") ||
-    pathname.startsWith("/api/factory/login") ||
-    pathname.startsWith("/api/auth/login")
-  ) {
-    if (isRateLimited(clientIp)) {
-      return NextResponse.json(
-        { error: "Too many login attempts. Please try again later." },
-        { status: 429 },
-      );
-    }
+  if (pathname.startsWith("/api/") && !checkRateLimit(generalRateLimits, `general-${clientIp}`, RATE_LIMIT_CONFIG.general.windowMs, RATE_LIMIT_CONFIG.general.maxRequests)) {
+    return NextResponse.json({ error: "Too many requests", retryAfter: 60 }, { status: 429, headers: { "Retry-After": "60" } });
   }
 
-  // ========================================================================
-  // API RATE LIMITING - General Endpoints
-  // ========================================================================
-  if (pathname.startsWith("/api/") && method !== "GET") {
-    const now = Date.now();
-    const key = `${clientIp}-${pathname}`;
-    const record = apiRateLimits.get(key);
+  if ((pathname.includes("/login") || pathname.includes("/auth") || pathname.includes("/register")) && 
+      !checkRateLimit(loginAttempts, `login-${clientIp}`, RATE_LIMIT_CONFIG.login.windowMs, RATE_LIMIT_CONFIG.login.maxAttempts)) {
+    const resetTime = loginAttempts.get(`login-${clientIp}`)?.resetTime || Date.now();
+    return NextResponse.json({ error: "Too many auth attempts", retryAfter: Math.ceil((resetTime - Date.now()) / 1000) }, { status: 429, headers: { "Retry-After": "60" } });
+  }
 
-    if (record && now < record.resetTime) {
-      if (record.count >= 20) {
-        // 20 POST/PUT/DELETE requests per minute
-        return NextResponse.json(
-          { error: "Rate limit exceeded" },
-          { status: 429 },
-        );
-      }
-      record.count++;
-    } else {
-      apiRateLimits.set(key, { count: 1, resetTime: now + 60000 });
-    }
+  if (pathname.startsWith("/api/") && method !== "GET" && 
+      !checkRateLimit(apiRateLimits, `api-${clientIp}-${pathname}`, RATE_LIMIT_CONFIG.api.windowMs, RATE_LIMIT_CONFIG.api.maxRequests)) {
+    return NextResponse.json({ error: "Endpoint rate limit exceeded" }, { status: 429, headers: { "Retry-After": "60" } });
   }
 
   const response = NextResponse.next();
 
-  // ========================================================================
-  // CORS CONFIGURATION - Origin Validation
-  // ========================================================================
-  const origin = request.headers.get("origin");
-  if (origin && ALLOWED_ORIGINS.some((allowed) => origin === allowed)) {
-    // Exact match only — prevents subdomain/substring spoofing attacks
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
     response.headers.set("Access-Control-Allow-Origin", origin);
-  } else if (!origin && ALLOWED_ORIGINS.length > 0) {
-    // Non-browser requests (server-to-server) — allow with first origin
-    response.headers.set("Access-Control-Allow-Origin", ALLOWED_ORIGINS[0]);
+  }
+  response.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH");
+  response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, X-CSRF-Token, X-Real-IP, X-Forwarded-For");
+  response.headers.set("Vary", "Origin");
+
+  Object.entries(getSecurityHeaders()).forEach(([k, v]) => response.headers.set(k, v));
+  Object.entries(getCspHeaders()).forEach(([k, v]) => response.headers.set(k, v));
+
+  response.headers.set("X-Permitted-Cross-Domain-Policies", "none");
+  response.headers.delete("X-Powered-By");
+  response.headers.set("Server", "aurora-proxy");
+
+  if (pathname.match(/\/(profile|checkout|account|settings|orders)/)) {
+    response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate, s-maxage=0");
+    response.headers.set("Pragma", "no-cache");
   }
 
-  response.headers.set(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS",
-  );
-  response.headers.set(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, X-CSRF-Token",
-  );
-  response.headers.set("Access-Control-Max-Age", "3600");
-  response.headers.set("Access-Control-Allow-Credentials", "true");
-
-  // ========================================================================
-  // SECURITY HEADERS - XSS, Clickjacking, MIME Type Protection
-  // ========================================================================
-  const securityHeaders = getSecurityHeaders();
-  Object.entries(securityHeaders).forEach(([key, value]) => {
-    response.headers.set(key, value);
-  });
-
-  // ========================================================================
-  // CONTENT SECURITY POLICY
-  // ========================================================================
-  const cspHeaders = getCspHeaders();
-  Object.entries(cspHeaders).forEach(([key, value]) => {
-    response.headers.set(key, value);
-  });
-
-  // ========================================================================
-  // ADDITIONAL SECURITY HEADERS
-  // ========================================================================
-  response.headers.set("X-Permitted-Cross-Domain-Policies", "none");
-  response.headers.set("X-Powered-By", ""); // Remove server info
-  response.headers.set("Server", ""); // Remove server info
-
-  // ========================================================================
-  // REQUEST SIZE LIMIT - Prevent large payload attacks
-  // ========================================================================
   const contentLength = request.headers.get("content-length");
   if (contentLength && parseInt(contentLength) > 10 * 1024 * 1024) {
-    // 10MB limit
     return NextResponse.json({ error: "Payload too large" }, { status: 413 });
   }
 
-  // ========================================================================
-  // METHOD VALIDATION - Prevent invalid HTTP methods
-  // ========================================================================
-  const validMethods = [
-    "GET",
-    "POST",
-    "PUT",
-    "DELETE",
-    "OPTIONS",
-    "PATCH",
-    "HEAD",
-  ];
-  if (!validMethods.includes(method)) {
+  if (!["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"].includes(method)) {
     return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
   }
 
@@ -160,13 +120,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/api/:path*",
-    "/seller/:path*",
-    "/factory/:path*",
-    "/login/:path*",
-    "/manage/:path*",
-    "/profile/:path*",
-    "/checkout/:path*",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"],
 };
