@@ -130,7 +130,7 @@ function HeaderLogo() {
         </div>
       </div>
       <div className="flex flex-col">
-        <span className="text-2xl font-extrabold uppercase leading-none tracking-tight text-zinc-900 dark:text-white">
+        <span className="text-2xl font-extrabold uppercase leading-none tracking-tight ">
           Aurora
         </span>
         <span className="mt-0.5 text-[10px] font-medium uppercase leading-none tracking-[0.2em] text-zinc-400 dark:text-zinc-500">

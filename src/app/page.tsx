@@ -1,15 +1,17 @@
 import Link from "next/link";
 import { Button } from "@/components/ui";
-import { HeroSection, CategoriesSection, FeaturesSection } from "@/components/home/HomeClient";
+import {
+  HeroSection,
+  CategoriesSection,
+  FeaturesSection,
+} from "@/components/home/HomeClient";
 import FeaturedProducts from "@/components/FeaturedProducts";
-
-
 
 export default function Home() {
   return (
     <main className="bg-background text-foreground">
       <HeroSection />
-      
+
       {/* Dynamic Featured Products - Server Component */}
       <FeaturedProducts />
 
@@ -24,7 +26,7 @@ export default function Home() {
             <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />
 
             <div className="relative z-10 max-w-3xl">
-              <h2 className="text-4xl md:text-6xl font-black italic tracking-tighter text-zinc-900 dark:text-white uppercase mb-8 leading-none">
+              <h2 className="text-4xl md:text-6xl font-black italic tracking-tighter  uppercase mb-8 leading-none">
                 Ready to Join the <br />
                 <span className="text-blue-600 dark:text-blue-400">
                   Aurora Ecosystem?

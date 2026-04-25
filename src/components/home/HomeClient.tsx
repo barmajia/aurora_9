@@ -2,7 +2,15 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, ChevronRight, Zap, Shield, Truck, RefreshCw, Award } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronRight,
+  Zap,
+  Shield,
+  Truck,
+  RefreshCw,
+  Award,
+} from "lucide-react";
 import { Button } from "@/components/ui";
 
 const CATEGORIES = [
@@ -48,7 +56,8 @@ const FEATURES = [
   {
     icon: Zap,
     title: "Instant Delivery",
-    description: "Experience lightning-fast logistics with our global edge network.",
+    description:
+      "Experience lightning-fast logistics with our global edge network.",
   },
   {
     icon: Shield,
@@ -176,9 +185,9 @@ export function CategoriesSection() {
               transition={{ delay: idx * 0.1 }}
             >
               <Link href={`/products?category=${category.name.toLowerCase()}`}>
-                <div className="group relative h-64 rounded-[2rem] overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-all duration-500 hover:border-blue-500/50">
+                <div className="group relative h-64 rounded-2rem overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-all duration-500 hover:border-blue-500/50">
                   <div
-                    className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
+                    className={`absolute inset-0 bg-linear-to-br ${category.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
                   />
                   <div className="absolute inset-0 p-8 flex flex-col justify-between">
                     <div className="text-5xl transform group-hover:scale-110 transition-transform duration-500">
