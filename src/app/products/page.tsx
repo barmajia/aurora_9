@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import ProductCard from "@/components/ProductCard";
 import { ProductCardSkeleton, Button } from "@/components/ui";
@@ -18,6 +18,43 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Product } from "@/types";
 
+// Memoized skeleton loader component
+const SkeletonGrid = ({ count = 6 }: { count?: number }) => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    {[...Array(count)].map((_, i) => (
+      <ProductCardSkeleton key={i} />
+    ))}
+  </div>
+);
+
+// Empty state component
+const EmptyState = ({ onReset }: { onReset: () => void }) => (
+  <motion.div
+    initial={{ opacity: 0, scale: 0.98 }}
+    animate={{ opacity: 1, scale: 1 }}
+    className="flex flex-col items-center justify-center py-48 aurora-glass rounded-[4rem] border-dashed border-zinc-200 dark:border-zinc-800"
+  >
+    <Package
+      className="text-zinc-100 dark:text-zinc-900 mb-8"
+      size={100}
+      strokeWidth={1}
+    />
+    <h3 className="text-3xl font-black italic tracking-tighter text-zinc-400 uppercase">
+      Zero Matches Detected
+    </h3>
+    <p className="text-zinc-300 dark:text-zinc-700 text-[10px] font-black mt-4 uppercase tracking-[0.3em]">
+      Recalibrate search parameters
+    </p>
+    <Button
+      variant="outline"
+      onClick={onReset}
+      className="mt-12 rounded-full px-10"
+    >
+      Clear Protocol
+    </Button>
+  </motion.div>
+);
+
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,58 +64,89 @@ export default function ProductsPage() {
   const [sortBy, setSortBy] = useState<string>("newest");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  async function fetchProducts() {
+  // Optimized fetch with useCallback to prevent unnecessary re-renders
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
         .from("products")
-        .select("*")
+        .select("id,name,title,description,price,image,images,category,rating,reviews,badge,created_at,status,quantity,currency,subcategory")
         .eq("status", "active")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
       setProducts(data || []);
+      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load products");
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  // Memoized category extraction
   const categories = useMemo(() => {
     const cats = new Set(products.map((p) => p.category || "General"));
     return ["all", ...Array.from(cats)];
   }, [products]);
 
+  // Optimized filtering with early returns and reduced computations
   const filteredProducts = useMemo(() => {
-    let result = [...products];
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
+    const query = searchQuery.toLowerCase().trim();
+    const hasSearchQuery = query.length > 0;
+    const hasCategoryFilter = selectedCategory !== "all";
+    const needsSorting = sortBy !== "newest";
+
+    // Early return if no filters needed
+    if (!hasSearchQuery && !hasCategoryFilter && !needsSorting) {
+      return products;
+    }
+
+    let result = products;
+
+    // Apply filters in order of selectivity (most selective first)
+    if (hasSearchQuery) {
       result = result.filter(
         (p) =>
           (p.title || p.name || "").toLowerCase().includes(query) ||
           (p.description || "").toLowerCase().includes(query),
       );
     }
-    if (selectedCategory !== "all") {
+
+    if (hasCategoryFilter) {
       result = result.filter((p) => p.category === selectedCategory);
     }
 
-    if (sortBy === "price-low")
-      result.sort((a, b) => (a.price || 0) - (b.price || 0));
-    if (sortBy === "price-high")
-      result.sort((a, b) => (b.price || 0) - (a.price || 0));
-    if (sortBy === "name")
-      result.sort((a, b) =>
-        (a.title || a.name || "").localeCompare(b.title || b.name || ""),
-      );
+    // Only sort if needed
+    if (needsSorting) {
+      // Create a copy only when sorting is actually needed
+      result = [...result];
+      switch (sortBy) {
+        case "price-low":
+          result.sort((a, b) => (a.price || 0) - (b.price || 0));
+          break;
+        case "price-high":
+          result.sort((a, b) => (b.price || 0) - (a.price || 0));
+          break;
+        case "name":
+          result.sort((a, b) =>
+            (a.title || a.name || "").localeCompare(b.title || b.name || ""),
+          );
+          break;
+      }
+    }
 
     return result;
   }, [products, searchQuery, selectedCategory, sortBy]);
+
+  const handleReset = useCallback(() => {
+    setSearchQuery("");
+    setSelectedCategory("all");
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-20 pt-32 px-6 md:px-12 lg:px-24 p-10">
@@ -264,41 +332,11 @@ export default function ProductsPage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
                 >
-                  {[...Array(6)].map((_, i) => (
-                    <ProductCardSkeleton key={i} />
-                  ))}
+                  <SkeletonGrid count={6} />
                 </motion.div>
               ) : filteredProducts.length === 0 ? (
-                <motion.div
-                  key="empty"
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="flex flex-col items-center justify-center py-48 aurora-glass rounded-[4rem] border-dashed border-zinc-200 dark:border-zinc-800"
-                >
-                  <Package
-                    className="text-zinc-100 dark:text-zinc-900 mb-8"
-                    size={100}
-                    strokeWidth={1}
-                  />
-                  <h3 className="text-3xl font-black italic tracking-tighter text-zinc-400 uppercase">
-                    Zero Matches Detected
-                  </h3>
-                  <p className="text-zinc-300 dark:text-zinc-700 text-[10px] font-black mt-4 uppercase tracking-[0.3em]">
-                    Recalibrate search parameters
-                  </p>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setSearchQuery("");
-                      setSelectedCategory("all");
-                    }}
-                    className="mt-12 rounded-full px-10"
-                  >
-                    Clear Protocol
-                  </Button>
-                </motion.div>
+                <EmptyState onReset={handleReset} />
               ) : (
                 <motion.div
                   key={viewMode}

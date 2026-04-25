@@ -1,3 +1,5 @@
+'use client';
+
 import { safeSelect } from "@/lib/database";
 import { Product } from "@/types";
 import { notFound } from "next/navigation";
@@ -12,10 +14,17 @@ import {
   RefreshCw, 
   Star,
   Zap,
-  Info
+  Info,
+  Minus,
+  Plus
 } from "lucide-react";
 import { Button, Magnetic } from "@/components/ui";
 import { deobfuscateId } from "@/lib/id-utils";
+import { useCartStore } from "@/store/cart";
+import { useWishlistStore } from "@/store/wishlist";
+import { useToastStore } from "@/store/toast";
+import { useState, useEffect } from "react";
+import ProductQuickView from "@/components/ProductQuickView";
 
 async function getProductById(id: string): Promise<Product | null> {
   try {
@@ -35,23 +44,79 @@ async function getProductById(id: string): Promise<Product | null> {
   }
 }
 
-export default async function ProductDetailPage({ params }: { params: Promise<{ asin: string }> }) {
-  const { asin: key } = await params;
-  const actualId = deobfuscateId(key);
-  const product = await getProductById(actualId);
+interface ProductClientProps {
+  product: Product;
+  actualId: string;
+}
 
-  if (!product) {
-    notFound();
-  }
-
+function ProductClient({ product, actualId }: ProductClientProps) {
+  const [quantity, setQuantity] = useState(1);
+  const [selectedConfig, setSelectedConfig] = useState<string>("Base");
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  
+  const addItem = useCartStore((state) => state.addItem);
+  const { items: wishlistItems, addItem: addToWishlist, removeItem: removeFromWishlist } = useWishlistStore();
+  const addToast = useToastStore((state) => state.addToast);
+  
+  const isInWishlist = wishlistItems.some(item => item.id === product.id);
+  
   const productName = product.name || product.title || "Unknown Product";
-  const productPrice = product.price || 0;
+  const basePrice = product.price || 0;
+  const configMultipliers: Record<string, number> = {
+    "Base": 1,
+    "Pro": 1.3,
+    "Ultra": 1.6
+  };
+  const currentPrice = basePrice * (configMultipliers[selectedConfig] || 1);
+  
   const productImages = product.images && product.images.length > 0 
     ? product.images.map(img => img.url) 
     : [product.image || `https://picsum.photos/seed/${actualId}/1200/1200`].filter(Boolean);
   
   const mainImage = productImages[0];
   const productDescription = product.description || "No description available for this industrial node.";
+
+  const handleAddToCart = () => {
+    setIsAddingToCart(true);
+    const productWithQuantity = {
+      ...product,
+      price: currentPrice,
+      quantity: quantity,
+      configuration: selectedConfig
+    };
+    
+    // Add item multiple times based on quantity
+    for (let i = 0; i < quantity; i++) {
+      addItem(productWithQuantity);
+    }
+    
+    setTimeout(() => {
+      setIsAddingToCart(false);
+      addToast(`${quantity}x ${productName} deployed to cart`, "success");
+      setQuantity(1);
+    }, 500);
+  };
+
+  const handleWishlistToggle = () => {
+    if (isInWishlist) {
+      removeFromWishlist(product.id);
+      addToast("Removed from wishlist", "info");
+    } else {
+      addToWishlist({
+        id: product.id,
+        name: productName,
+        price: currentPrice,
+        image: mainImage,
+        category: product.category || "Universal",
+        description: productDescription
+      });
+      addToast("Pinned to wishlist", "success");
+    }
+  };
+
+  const handleQuantityChange = (delta: number) => {
+    setQuantity(prev => Math.max(1, prev + delta));
+  };
 
   return (
     <div className="min-h-screen pt-32 pb-24 bg-background">
@@ -125,12 +190,17 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
               <div className="flex items-baseline gap-4 mb-8">
                 <p className="text-4xl font-black italic tracking-tighter text-blue-600 dark:text-blue-400">
-                  ${productPrice.toLocaleString()}
+                  ${currentPrice.toLocaleString()}
                 </p>
                 {product.oldPrice && (
                   <p className="text-xl font-bold text-zinc-400 line-through decoration-rose-500/50">
-                    ${product.oldPrice.toLocaleString()}
+                    ${(product.oldPrice * (configMultipliers[selectedConfig] || 1)).toLocaleString()}
                   </p>
+                )}
+                {selectedConfig !== "Base" && (
+                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full">
+                    {selectedConfig} Tier
+                  </span>
                 )}
               </div>
 
@@ -139,16 +209,44 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               </p>
             </div>
 
-            {/* Config Options (Mock) */}
+            {/* Config Options */}
             <div className="space-y-8 mb-12">
                <div>
                   <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 mb-4">Select Configuration</h3>
                   <div className="flex gap-3">
                      {["Base", "Pro", "Ultra"].map((spec) => (
-                       <button key={spec} className="px-6 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-[10px] font-black uppercase tracking-widest hover:border-blue-500 transition-colors">
-                         {spec}
+                       <button 
+                        key={spec} 
+                        onClick={() => setSelectedConfig(spec)}
+                        className={`px-6 py-3 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all ${
+                          selectedConfig === spec 
+                            ? "border-blue-500 bg-blue-500/10 text-blue-500" 
+                            : "border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:border-blue-500"
+                        }`}
+                       >
+                         {spec} {spec !== "Base" && `(+${Math.round((configMultipliers[spec] - 1) * 100)}%)`}
                        </button>
                      ))}
+                  </div>
+               </div>
+               
+               {/* Quantity Selector */}
+               <div>
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 mb-4">Quantity</h3>
+                  <div className="flex items-center gap-4">
+                    <button 
+                      onClick={() => handleQuantityChange(-1)}
+                      className="w-12 h-12 rounded-xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-500 hover:border-blue-500 hover:text-blue-500 transition-all"
+                    >
+                      <Minus size={18} />
+                    </button>
+                    <span className="text-2xl font-black text-zinc-900 dark:text-white w-12 text-center">{quantity}</span>
+                    <button 
+                      onClick={() => handleQuantityChange(1)}
+                      className="w-12 h-12 rounded-xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-zinc-500 hover:border-blue-500 hover:text-blue-500 transition-all"
+                    >
+                      <Plus size={18} />
+                    </button>
                   </div>
                </div>
             </div>
@@ -156,14 +254,30 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             {/* Actions */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-auto">
                <Magnetic strength={0.1}>
-                  <Button size="lg" className="w-full h-16 rounded-2xl flex items-center justify-center gap-3">
-                    <ShoppingBag size={20} />
-                    Deploy to Cart
+                  <Button 
+                    size="lg" 
+                    onClick={handleAddToCart}
+                    disabled={isAddingToCart}
+                    className="w-full h-16 rounded-2xl flex items-center justify-center gap-3 disabled:opacity-50"
+                  >
+                    {isAddingToCart ? (
+                      <Zap size={20} className="animate-pulse" />
+                    ) : (
+                      <ShoppingBag size={20} />
+                    )}
+                    {isAddingToCart ? "Deploying..." : `Deploy ${quantity > 1 ? `${quantity}x ` : ''}to Cart`}
                   </Button>
                </Magnetic>
-               <button className="h-16 rounded-2xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center gap-3 text-zinc-500 hover:text-rose-500 hover:border-rose-500/50 transition-all">
-                  <Heart size={20} />
-                  Pin to Node
+               <button 
+                onClick={handleWishlistToggle}
+                className={`h-16 rounded-2xl border flex items-center justify-center gap-3 transition-all ${
+                  isInWishlist 
+                    ? "border-rose-500 bg-rose-500/10 text-rose-500" 
+                    : "border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:text-rose-500 hover:border-rose-500/50"
+                }`}
+               >
+                  <Heart size={20} className={isInWishlist ? "fill-rose-500" : ""} />
+                  {isInWishlist ? "Pinned" : "Pin to Node"}
                </button>
             </div>
 
@@ -199,7 +313,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                  <div className="space-y-6">
                     {[
                       { label: "Hardware Hash", value: "AU-RX-900-V4" },
-                      { label: "Security Token", value: key.substring(0, 12).toUpperCase() },
+                      { label: "Security Token", value: actualId.substring(0, 12).toUpperCase() },
                       { label: "Encryption", value: "AES-512-NODE" },
                       { label: "Logistics Latency", value: "< 48 Hours" }
                     ].map((spec) => (
@@ -227,4 +341,16 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       </div>
     </div>
   );
+}
+
+export default async function ProductDetailPage({ params }: { params: Promise<{ asin: string }> }) {
+  const { asin: key } = await params;
+  const actualId = deobfuscateId(key);
+  const product = await getProductById(actualId);
+
+  if (!product) {
+    notFound();
+  }
+
+  return <ProductClient product={product} actualId={actualId} />;
 }
