@@ -108,14 +108,16 @@ export default function SellerSignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-12">
-      {/* Background Gradients */}
+    <div className="min-h-screen bg-white dark:bg-background pb-12">
+      {/* Background Gradients - Light Theme with Contrast */}
       <div className="fixed inset-0 -z-10">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-0 left-0 w-full h-full bg-white dark:hidden" />
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-gradient-to-br from-emerald-200/40 to-teal-200/40 rounded-full blur-3xl animate-pulse dark:from-emerald-500/20 dark:to-teal-500/20" />
         <div
-          className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-br from-rose-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse"
+          className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-br from-teal-200/40 to-cyan-200/40 rounded-full blur-3xl animate-pulse dark:from-teal-500/20 dark:to-cyan-500/20"
           style={{ animationDelay: "1s" }}
         />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-br from-emerald-100/30 to-teal-100/30 rounded-full blur-3xl dark:from-emerald-500/10 dark:to-teal-500/10" />
       </div>
 
       <div className="max-w-2xl mx-auto px-6 lg:px-8">
@@ -127,7 +129,7 @@ export default function SellerSignupPage() {
         >
           <Link
             href="/seller/login"
-            className="inline-flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-semibold transition-colors"
+            className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-semibold transition-colors"
           >
             <ArrowLeft size={20} />
             Back to Login
@@ -145,7 +147,7 @@ export default function SellerSignupPage() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="inline-flex p-4 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl mb-6 text-white"
+            className="inline-flex p-4 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl mb-6 text-white"
           >
             <Store size={40} />
           </motion.div>
@@ -153,7 +155,7 @@ export default function SellerSignupPage() {
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight mb-4">
             <span className="text-foreground">Join as a</span>
             <br />
-            <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
               Seller
             </span>
           </h1>
@@ -204,7 +206,7 @@ export default function SellerSignupPage() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="John Doe"
-                  className="w-full px-4 py-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-foreground placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                  className="w-full px-4 py-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-foreground placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                   required
                 />
               </motion.div>
@@ -248,7 +250,7 @@ export default function SellerSignupPage() {
                   value={formData.storeName}
                   onChange={handleChange}
                   placeholder="My Awesome Store"
-                  className="w-full px-4 py-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-foreground placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                  className="w-full px-4 py-3 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-foreground placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                   required
                 />
               </motion.div>
@@ -347,20 +349,20 @@ export default function SellerSignupPage() {
                   name="agreeToTerms"
                   checked={formData.agreeToTerms}
                   onChange={handleChange}
-                  className="w-5 h-5 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500 mt-1"
+                  className="w-5 h-5 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500 mt-1"
                 />
                 <span className="text-sm text-zinc-600 dark:text-zinc-400">
                   I agree to the{" "}
                   <Link
                     href="/terms"
-                    className="text-indigo-600 dark:text-indigo-400 hover:underline"
+                    className="text-emerald-600 dark:text-emerald-400 hover:underline"
                   >
                     Terms of Service
                   </Link>{" "}
                   and{" "}
                   <Link
                     href="/privacy"
-                    className="text-indigo-600 dark:text-indigo-400 hover:underline"
+                    className="text-emerald-600 dark:text-emerald-400 hover:underline"
                   >
                     Privacy Policy
                   </Link>
@@ -373,7 +375,7 @@ export default function SellerSignupPage() {
               variants={itemVariants}
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+              className="w-full py-4 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -396,7 +398,7 @@ export default function SellerSignupPage() {
               Already have an account?{" "}
               <Link
                 href="/seller/login"
-                className="text-indigo-600 dark:text-indigo-400 hover:underline font-semibold"
+                className="text-emerald-600 dark:text-emerald-400 hover:underline font-semibold"
               >
                 Sign In
               </Link>
@@ -433,10 +435,10 @@ export default function SellerSignupPage() {
               <motion.div
                 key={idx}
                 variants={itemVariants}
-                className="text-center p-4 rounded-lg border border-zinc-200 dark:border-zinc-800"
+                className="text-center p-4 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-gradient-to-br from-emerald-50/50 to-teal-50/50 dark:from-emerald-900/20 dark:to-teal-900/20"
               >
                 <BenefitIcon
-                  className="mx-auto mb-2 text-indigo-600 dark:text-indigo-400"
+                  className="mx-auto mb-2 text-emerald-600 dark:text-emerald-400"
                   size={28}
                 />
                 <p className="font-semibold text-foreground text-sm mb-1">

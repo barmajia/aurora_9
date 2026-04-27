@@ -56,13 +56,16 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden bg-[#010103]">
-      {/* 🏙️ Luxury Atmospheric Glows & Textures */}
+    <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden bg-white dark:bg-[#010103]">
+      {/* Light Theme Background */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-blue-600/10 rounded-full blur-[140px] animate-pulse" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-indigo-600/10 rounded-full blur-[140px] animate-pulse" style={{ animationDelay: '2s' }} />
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] dark:opacity-[0.05]" />
-        <div className="absolute inset-0 bg-linear-to-b from-transparent via-[#010103]/50 to-[#010103]" />
+        <div className="hidden dark:block absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-600/10 rounded-full blur-[140px] animate-pulse" />
+        <div className="hidden dark:block absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-indigo-600/10 rounded-full blur-[140px] animate-pulse" style={{ animationDelay: '2s' }} />
+        
+        {/* Light mode gradients */}
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-gradient-to-br from-emerald-200/40 to-teal-200/40 rounded-full blur-3xl animate-pulse dark:hidden" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-br from-teal-200/40 to-cyan-200/40 rounded-full blur-3xl animate-pulse dark:hidden" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-br from-emerald-100/30 to-teal-100/30 rounded-full blur-3xl dark:hidden" />
       </div>
 
       <motion.div
@@ -76,24 +79,24 @@ export default function SignupPage() {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/5 bg-white/[0.02] backdrop-blur-md mb-8"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-emerald-200 bg-emerald-50 mb-8"
           >
             <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">
-              Aurora Node Initiation
+            <span className="text-[10px] font-medium uppercase tracking-[0.4em] text-emerald-600">
+              Create Account
             </span>
           </motion.div>
 
-          <h1 className="text-6xl md:text-8xl font-black italic tracking-tighter text-white mb-6 uppercase leading-[0.8]">
-            Genesis <br />
-            <span className="aurora-gradient-text text-emerald-400">Registry.</span>
+          <h1 className="text-6xl md:text-8xl font-black italic tracking-tighter text-slate-900 mb-6 uppercase leading-[0.8]">
+            Get <br />
+            <span className="text-emerald-600">Started.</span>
           </h1>
-          <p className="text-[11px] font-black text-white/30 tracking-[0.5em] uppercase">
-            Create Global Identity Node
+          <p className="text-[11px] font-medium text-slate-400 tracking-[0.5em] uppercase">
+            Join Aurora today
           </p>
         </div>
 
-        <Card className="aurora-glass p-12 rounded-[4rem] border-white/5 shadow-[0_32px_64px_rgba(0,0,0,0.4)] bg-white/[0.01] relative overflow-hidden group">
+        <Card className="p-12 rounded-[3rem] border border-slate-200 shadow-xl bg-white relative overflow-hidden group">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
           
           <form onSubmit={handleSignup} className="space-y-8">
@@ -114,48 +117,48 @@ export default function SignupPage() {
             <div className="space-y-6">
               <Input
                 type="text"
-                label="Identity Alias (Full Name)"
+                label="Full Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="OPERATOR NAME"
+                placeholder="John Doe"
                 leftIcon={<User size={18} />}
                 required
-                className="bg-white/[0.02] border-white/5 focus:border-emerald-500/50 transition-all"
+                className="bg-slate-50 border-slate-200 focus:border-emerald-500 transition-all"
               />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Input
                   type="email"
-                  label="Node Uplink (Email)"
+                  label="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="EMAIL"
+                  placeholder="you@example.com"
                   leftIcon={<Mail size={18} />}
                   required
-                  className="bg-white/[0.02] border-white/5 focus:border-emerald-500/50 transition-all"
+                  className="bg-slate-50 border-slate-200 focus:border-emerald-500 transition-all"
                 />
                 <Input
                   type="tel"
-                  label="Comm Link (Phone)"
+                  label="Phone"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="PHONE"
+                  placeholder="+1 234 567 8900"
                   leftIcon={<Phone size={18} />}
                   required
-                  className="bg-white/[0.02] border-white/5 focus:border-emerald-500/50 transition-all"
+                  className="bg-slate-50 border-slate-200 focus:border-emerald-500 transition-all"
                 />
               </div>
 
               <Input
                 type="password"
-                label="Security Cipher"
+                label="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
                 leftIcon={<Lock size={18} />}
                 minLength={6}
                 required
-                className="bg-white/[0.02] border-white/5 focus:border-emerald-500/50 transition-all"
+                className="bg-slate-50 border-slate-200 focus:border-emerald-500 transition-all"
               />
             </div>
 
@@ -164,39 +167,46 @@ export default function SignupPage() {
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full h-20 rounded-3xl text-xs font-black uppercase tracking-[0.3em] shadow-xl shadow-emerald-600/10 bg-emerald-600 hover:bg-emerald-500 border-none"
+                  className="w-full h-20 rounded-3xl text-xs font-bold uppercase tracking-[0.3em] shadow-lg"
                   isLoading={loading}
                   rightIcon={<ArrowRight size={20} />}
-                >
-                  Initialize Node
+>
+                  Create Account
                 </Button>
               </Magnetic>
             </div>
           </form>
 
-          <footer className="mt-14 pt-12 border-t border-white/5 text-center">
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20">
-              Existing Node?{" "}
+          <footer className="mt-14 pt-12 border-t border-slate-200 text-center">
+            <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-slate-400">
+              Already have an account?{" "}
               <Link
                 href="/login"
-                className="text-white hover:text-emerald-400 transition-all ml-2 border-b border-white/20 hover:border-emerald-400 pb-0.5"
+                className="text-emerald-600 hover:text-emerald-700 transition-all ml-2 border-b border-emerald-300 pb-0.5"
               >
-                Return to Portal
+                Sign in
               </Link>
             </p>
           </footer>
         </Card>
 
-        <div className="mt-12 flex justify-center gap-10 grayscale opacity-20 hover:opacity-100 transition-opacity duration-500">
+        <div className="mt-12 flex justify-center gap-10 text-slate-300">
           <div className="flex items-center gap-3">
-            <Sparkles size={16} className="text-white" />
-            <span className="text-[9px] font-black uppercase tracking-[0.4em] text-white">Encrypted Node</span>
+            <Sparkles size={16} className="text-emerald-500" />
+            <span className="text-[9px] font-medium uppercase tracking-[0.4em] text-slate-400">Secure</span>
           </div>
           <div className="flex items-center gap-3">
-            <ShieldCheck size={16} className="text-white" />
-            <span className="text-[9px] font-black uppercase tracking-[0.4em] text-white">Verified Origin</span>
+            <ShieldCheck size={16} className="text-emerald-500" />
+            <span className="text-[9px] font-medium uppercase tracking-[0.4em] text-slate-400">Protected</span>
           </div>
         </div>
+
+        <Link
+          href="/seller/signup"
+          className="block mt-8 text-center text-[8px] font-medium uppercase tracking-[0.5em] text-slate-300 hover:text-emerald-600 transition-colors"
+        >
+          Become a Seller
+        </Link>
       </motion.div>
     </div>
   );

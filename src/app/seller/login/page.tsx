@@ -25,8 +25,9 @@ function BackgroundGradients({ theme }: { theme: "light" | "dark" }) {
   if (theme === "light") {
     return (
       <>
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/10 rounded-full blur-[120px] animate-pulse pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-teal-500/5 rounded-full blur-[120px] animate-pulse pointer-events-none" />
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-gradient-to-br from-emerald-200/40 to-teal-200/40 rounded-full blur-3xl animate-pulse pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-br from-teal-200/40 to-cyan-200/40 rounded-full blur-3xl animate-pulse pointer-events-none" style={{ animationDelay: "1s" }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-br from-emerald-100/30 to-teal-100/30 rounded-full blur-3xl pointer-events-none" />
       </>
     );
   }
@@ -47,17 +48,18 @@ interface TopNavProps {
 function TopNav({ theme, onThemeToggle }: TopNavProps) {
   const bgClass =
     theme === "light"
-      ? "bg-black/5 border-black/10 text-slate-700 hover:bg-black/10"
+      ? "bg-white/80 border-emerald-200/50 text-slate-700 hover:bg-emerald-50 backdrop-blur-md"
       : "bg-white/5 border-white/10 text-white/80 hover:bg-white/10";
 
   return (
     <div className="absolute top-6 left-6 right-6 flex items-center justify-between z-20">
-      <button
+      <Link
+        href="/seller"
         className={`flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md border transition-all text-sm font-medium ${bgClass}`}
       >
         <ArrowLeft className="h-4 w-4" />
         Back
-      </button>
+      </Link>
 
       <button
         onClick={onThemeToggle}
@@ -420,7 +422,7 @@ export default function SellerLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -485,7 +487,7 @@ export default function SellerLoginPage() {
 
   const bgClass =
     theme === "light"
-      ? "bg-white dark:bg-white"
+      ? "bg-white"
       : "bg-slate-950 dark:bg-slate-950";
 
   return (

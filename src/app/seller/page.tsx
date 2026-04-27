@@ -219,39 +219,7 @@ export default function SellerPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background overflow-hidden">
-      {/* Seller Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Store className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
-            <span className="font-bold text-lg text-slate-900 dark:text-white">
-              Aurora Seller Hub
-            </span>
-          </div>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link
-              href="/seller/features"
-              className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
-            >
-              Features
-            </Link>
-            <Link
-              href="/seller/pricing"
-              className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/seller/login"
-              className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
-            >
-              Login
-            </Link>
-          </nav>
-        </div>
-      </header>
-
+    <div className="min-h-screen bg-white dark:bg-slate-950 overflow-hidden">
       {/* Scroll to top button */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -266,18 +234,18 @@ export default function SellerPage() {
       </button>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 pt-16">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-100 via-emerald-50 to-slate-100 dark:from-slate-900 dark:via-emerald-950 dark:to-slate-900 pt-16">
         {/* Animated Background */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)] dark:bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)]" />
           <FloatingParticles />
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-300/20 rounded-full blur-3xl animate-pulse dark:bg-emerald-500/20" />
           <div
-            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl animate-pulse"
+            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-300/20 rounded-full blur-3xl animate-pulse dark:bg-teal-500/20"
             style={{ animationDelay: "1s" }}
           />
           <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-3xl animate-pulse"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-600px h-600px bg-emerald-200/10 rounded-full blur-3xl animate-pulse dark:bg-emerald-500/10"
             style={{ animationDelay: "2s" }}
           />
         </div>
@@ -285,7 +253,7 @@ export default function SellerPage() {
         {/* Hero Content */}
         <div className="relative z-10 container mx-auto px-4 py-20">
           <div className="max-w-5xl mx-auto text-center space-y-8 animate-fade-in">
-            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-emerald-500/10 backdrop-blur-md border border-emerald-500/20 text-emerald-300 text-sm font-medium mx-auto transition-all duration-300 hover:bg-emerald-500/20 hover:scale-105 cursor-pointer">
+            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-emerald-100 dark:bg-emerald-500/10 backdrop-blur-md border border-emerald-300 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-sm font-medium mx-auto transition-all duration-300 hover:bg-emerald-200 dark:hover:bg-emerald-500/20 hover:scale-105 cursor-pointer">
               <Sparkles className="h-4 w-4 animate-spin-slow" />
               <span>
                 {t("sellerWelcome.hero.badge", "Become a Seller on Aurora")}
@@ -294,12 +262,12 @@ export default function SellerPage() {
             </div>
 
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">
-              <span className="bg-gradient-to-r from-emerald-300 via-white to-teal-300 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-emerald-600 via-emerald-800 to-teal-600 dark:from-emerald-300 dark:via-white dark:to-teal-300 bg-clip-text text-transparent">
                 {t("sellerWelcome.hero.title", "Sell to the World")}
               </span>
             </h1>
 
-            <p className="text-lg md:text-2xl text-white/70 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-2xl text-slate-600 dark:text-white/70 max-w-3xl mx-auto leading-relaxed">
               {t(
                 "sellerWelcome.hero.subtitle",
                 "Join thousands of successful sellers growing their business on Aurora. Reach global customers, manage your store, and scale with powerful tools.",
@@ -318,14 +286,14 @@ export default function SellerPage() {
               <button
                 type="button"
                 onClick={() => router.push("/seller/login")}
-                className="border-2 border-emerald-500/30 bg-emerald-500/10 backdrop-blur-md text-emerald-200 hover:bg-emerald-500/20 text-lg px-10 py-7 rounded-xl transition-all duration-300 hover:scale-105 flex items-center gap-2"
+                className="border-2 border-emerald-500/30 bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-200 hover:bg-emerald-200 dark:hover:bg-emerald-500/20 text-lg px-10 py-7 rounded-xl transition-all duration-300 hover:scale-105 flex items-center gap-2"
               >
                 <Play className="h-5 w-5" />
                 {t("sellerWelcome.hero.loginCta", "Login as Seller")}
               </button>
             </div>
 
-            <div className="flex flex-wrap justify-center gap-8 pt-8 text-white/60 text-sm">
+            <div className="flex flex-wrap justify-center gap-8 pt-8 text-slate-500 dark:text-white/60 text-sm">
               <div className="flex items-center gap-2">
                 <Zap className="h-4 w-4" />
                 <span>
@@ -380,7 +348,7 @@ export default function SellerPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-24 bg-background">
+      <section className="py-24 bg-white dark:bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
@@ -427,25 +395,25 @@ export default function SellerPage() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-24 bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 text-white relative overflow-hidden">
+      <section className="py-24 bg-gradient-to-br from-slate-100 via-emerald-50 to-slate-100 dark:from-slate-900 dark:via-emerald-950 dark:to-slate-900 text-slate-800 dark:text-white relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-500/15 rounded-full blur-3xl" />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-300/15 dark:bg-emerald-500/15 rounded-full blur-3xl" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-300/15 dark:bg-teal-500/15 rounded-full blur-3xl" />
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-sm font-medium mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 dark:bg-white/10 backdrop-blur-md border border-emerald-300 dark:border-white/20 text-emerald-700 dark:text-white/90 text-sm font-medium mb-4">
               <TrendingUp className="h-4 w-4" />
               <span>{t("sellerWelcome.steps.title", "How It Works")}</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900 dark:text-white">
               {t(
                 "sellerWelcome.steps.heading",
                 "Start Selling in 3 Easy Steps",
               )}
             </h2>
-            <p className="text-lg text-white/60">
+            <p className="text-lg text-slate-600 dark:text-white/60">
               {t(
                 "sellerWelcome.steps.subheading",
                 "Getting started is simple. Be up and running in minutes.",
@@ -456,22 +424,22 @@ export default function SellerPage() {
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {steps.map((step, index) => (
               <div key={index} className="relative group">
-                <div className="absolute -top-4 -left-4 text-7xl font-black text-emerald-500/10 group-hover:text-emerald-500/20 transition-colors duration-300">
+                <div className="absolute -top-4 -left-4 text-7xl font-black text-emerald-300/20 dark:text-emerald-500/10 group-hover:text-emerald-500/20 transition-colors duration-300">
                   {step.number}
                 </div>
 
-                <div className="relative p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-emerald-500/30 transition-all duration-500 hover:-translate-y-2 h-full">
-                  <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 mb-6 transition-all duration-300 group-hover:scale-110 group-hover:bg-emerald-500/30">
+                <div className="relative p-8 rounded-2xl bg-white dark:bg-white/5 backdrop-blur-sm border border-slate-200 dark:border-white/10 hover:bg-emerald-50 dark:hover:bg-white/10 hover:border-emerald-500/30 transition-all duration-500 hover:-translate-y-2 h-full">
+                  <div className="w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-6 transition-all duration-300 group-hover:scale-110 group-hover:bg-emerald-500/30">
                     {step.icon}
                   </div>
-                  <h3 className="font-semibold text-xl mb-3">{step.title}</h3>
-                  <p className="text-white/60 leading-relaxed">
+                  <h3 className="font-semibold text-xl text-slate-900 dark:text-white mb-3">{step.title}</h3>
+                  <p className="text-slate-600 dark:text-white/60 leading-relaxed">
                     {step.description}
                   </p>
                 </div>
 
                 {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-px bg-emerald-500/30" />
+                  <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-px bg-emerald-300/30 dark:bg-emerald-500/30" />
                 )}
               </div>
             ))}
@@ -480,7 +448,7 @@ export default function SellerPage() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-24 bg-background">
+      <section className="py-24 bg-white dark:bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">

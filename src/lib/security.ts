@@ -422,9 +422,8 @@ export function validateNumericId(id: string | number): boolean {
 export function obfuscateId(id: string): string {
   if (!id) return "";
   try {
-    // Simple Base64 + padding to make it look like a "Key"
     const b64 = Buffer.from(id).toString("base64");
-    return `node_${b64.replace(/=/g, "")}_${Math.floor(Math.random() * 1000)}`;
+    return `node_${b64.replace(/=/g, "")}`;
   } catch (e) {
     return id;
   }

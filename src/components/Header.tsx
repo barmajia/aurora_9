@@ -123,7 +123,7 @@ function useHeaderState() {
 function HeaderLogo() {
   return (
     <Link href="/" className="group flex items-center gap-3 cursor-pointer">
-      <div className="relative h-10 w-10 overflow-hidden rounded-xl border border-zinc-200 bg-gradient-to-br from-white via-zinc-50 to-zinc-200 transition-all duration-500 group-hover:scale-105 dark:border-zinc-800 dark:from-zinc-900 dark:via-zinc-950 dark:to-zinc-900">
+      <div className="relative h-10 w-10 overflow-hidden rounded-xl border border-zinc-200 bg-linear-to-br from-white via-zinc-50 to-zinc-200 transition-all duration-500 group-hover:scale-105 dark:border-zinc-800 dark:from-zinc-900 dark:via-zinc-950 dark:to-zinc-900">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,rgba(255,255,255,.7),transparent_55%)] dark:bg-[radial-gradient(circle_at_25%_25%,rgba(255,255,255,.12),transparent_55%)]" />
         <div className="relative flex h-full w-full items-center justify-center">
           <Sparkles className="h-5 w-5 text-zinc-900 dark:text-white" />
